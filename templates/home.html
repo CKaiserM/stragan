@@ -2,5 +2,14 @@
 
 {% load rest_framework %}
 {% block content %}
-Stragan
+<div class="container text-center">
+    <div class="row">
+        {% for product in products %}
+        <div class="col">
+            {% include 'product/p_home.html'%}
+          </div>
+        {% endfor %}
+
+    </div>
+  </div>
 {% endblock %}

@@ -8,11 +8,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Product
 
-class StraganView(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'home.html'
-    
-    def get(self, request):
-        products = Product.objects.all()
-        return Response({'products':products})
-    
+class KoszykView(APIView):
+    def summary(request):
+        pass
+    def add(request):
+        pass
+    def delete(request):
+        pass
+    def update(request):
+        pass    

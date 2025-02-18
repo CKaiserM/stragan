@@ -8,6 +8,9 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name_plural = "Categories"
 
 class Address(models.Model):
     street = models.CharField(max_length=255, default='')
@@ -37,7 +40,7 @@ class Customer(models.Model):
         return f'{self.first_name} {self.last_name}'
     
 class Product(models.Model):
-    name = models.CharField(max_length=120)
+    title = models.CharField(max_length=120)
     price = models.DecimalField(default=0, decimal_places=2, max_digits=12)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     description = models.TextField(null=True, blank=True)
@@ -45,7 +48,7 @@ class Product(models.Model):
     images = models.ImageField(upload_to='uploads/product/')
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class Order(models.Model):
