@@ -9,9 +9,23 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarScroll">
         <ul class="nav nav-pills">
-          <li class="nav-item">
-            <a class="nav-link" href="#">Kontakt</a>
-          </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-user"></i>
+          </a>
+          <ul class="dropdown-menu">
+            {% if user.is_authenticated %}
+            <li><a class="dropdown-item" href="{% url 'profile' request.user.id %}">Mój Profil</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a></li>
+            {% else %}
+            <li><a class="dropdown-item" href="{% url 'register' %}">Rejestracja</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'login' %}">Logowanie</a></li>
+            {% endif %}
+          </ul>
+        
         </ul>
       </div>
     </div>
