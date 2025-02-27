@@ -18,7 +18,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Product, Profile
+from .models import Product, Profile, FeaturedProducts, Category
 from .forms import SignUpForm, UpdateUserForm, AddressForm
 
 class StraganView(APIView):
@@ -27,8 +27,11 @@ class StraganView(APIView):
     
     def get(self, request):
         products = Product.objects.all()
-        return Response({'products':products})
-    
+        featured = FeaturedProducts.objects.all()
+        categories = Category.objects.all()
+        return Response({'products':products, 'featured_products':featured, 'categories':categories})
+
+
 
 class ProfileView(APIView):
     renderer_classes= [TemplateHTMLRenderer]
@@ -38,7 +41,7 @@ class ProfileView(APIView):
     def get(self, request, pk):
         profile = Profile.objects.get(user_id=pk)          
         return Response({"profile":profile})
-    
+
     def login_user(request):
         if request.method == "POST":
             username=request.POST['username']
@@ -109,3 +112,24 @@ class ChangePasswordView(PasswordChangeView):
     success_url = reverse_lazy('home')
     template_name = 'profile/change_password.html'
     success_message = "Password has been changed!"   
+
+class SearchView(APIView):
+    renderer_classes= [TemplateHTMLRenderer]
+    template_name = 'product/search.html'
+
+    def get(request):
+        return Response({})   
+
+    def post(self, request):
+        if request.method == "POST":
+                #grab search phrase
+            search = request.POST['search']
+            category = request.POST['category']
+            search_result = ''
+            if category == 'wszystkie-kategorie':
+                search_result = Product.objects.filter(title__contains=search)
+            elif category == Category.objects.filter(name__contains=category):
+                search_result = Product.objects.filter(title__contains=search, category__contains=category)
+            else:
+                messages.success(request, ("Brak produktów w podanej kategorii"))
+            return Response({'search_result':search_result})    

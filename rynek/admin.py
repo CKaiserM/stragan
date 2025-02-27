@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from .models import Product, Category, Profile, Address
+from .models import Product, Category, Profile, Address, FeaturedProducts
 #unregister groups
 admin.site.unregister(Group)
 
@@ -28,3 +28,4 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Product)
 admin.site.register(Category)
 admin.site.register(Address)
+admin.site.register(FeaturedProducts)

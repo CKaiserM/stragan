@@ -26,8 +26,6 @@ class Address(models.Model):
     def __str__(self):
         return f'{self.city} {self.street} {self.house_number}'
 
-
-
 # Profile profile
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -78,6 +76,11 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+class FeaturedProducts(models.Model):
+    featured = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.featured.title
 
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

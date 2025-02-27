@@ -4,6 +4,27 @@
       <a class="navbar-brand" href="{% url 'home' %}">
         Stragan
     </a>
+    <div class="input-group">
+      
+      <form class="input-group" action="{% url 'search_product' %}" method="POST">
+        {% csrf_token %}
+        <input id="tags" class="form-control" type="search" placeholder="Czego szukasz?" aria-label="Szukaj" list="datalistOptions" name="search">
+        <datalist id="datalistOptions">
+        {% for product in featured_products %}
+        <option value="{{product}}">{{product.featured_image}}</option>
+        {% endfor %}
+    </datalist>
+
+      <select class="form-select" aria-label="Kategorie" name="category">
+        <option value="wszystkie-kategorie">Wszystkie kategorie</option>
+        {% for category in categories %}
+        <option value="{{category}}">{{category}}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </form>
+    </div>
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
