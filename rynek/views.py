@@ -117,19 +117,18 @@ class SearchView(APIView):
     renderer_classes= [TemplateHTMLRenderer]
     template_name = 'product/search.html'
 
-    def get(request):
-        return Response({})   
-
     def post(self, request):
+        featured = FeaturedProducts.objects.all()
+        categories = Category.objects.all()
         if request.method == "POST":
                 #grab search phrase
             search = request.POST['search']
-            category = request.POST['category']
+            searched_category = request.POST['category']
             search_result = ''
-            if category == 'wszystkie-kategorie':
+            if searched_category == 'wszystkie-kategorie':
                 search_result = Product.objects.filter(title__contains=search)
-            elif category == Category.objects.filter(name__contains=category):
-                search_result = Product.objects.filter(title__contains=search, category__contains=category)
+            elif Category.objects.get(name=searched_category):
+                search_result = Product.objects.filter(category__name=searched_category).filter(title__contains=search)
             else:
                 messages.success(request, ("Brak produktów w podanej kategorii"))
-            return Response({'search_result':search_result})    
+            return Response({'search_result':search_result,'featured_products':featured, 'categories':categories})    
