@@ -8,11 +8,23 @@ import datetime
 class Category(models.Model):
     name = models.CharField(max_length=120)
 
+
     def __str__(self):
         return self.name
     
     class Meta:
         verbose_name_plural = "Categories"
+
+# Prduct categories
+class Subcategory(models.Model):
+    name = models.CharField(max_length=120)
+    parent_name = models.ForeignKey(Category, related_name='sub_categories', on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return f'- {self.parent_name} - {self.name}'
+    
+    class Meta:
+        verbose_name_plural = "Subcategories"
 
 class Address(models.Model):
     street = models.CharField(max_length=255, default='')
@@ -65,7 +77,7 @@ class Product(models.Model):
     title = models.CharField(max_length=120)
     price = models.DecimalField(default=0, decimal_places=2, max_digits=12)
     unit = models.CharField(max_length=120, default="Kilogram")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    category = models.ForeignKey(Subcategory, on_delete=models.CASCADE, default=1)
     description = models.TextField(null=True, blank=True)
     featured_image = models.ImageField(upload_to='uploads/product/')
     images = models.ImageField(upload_to='uploads/product/')

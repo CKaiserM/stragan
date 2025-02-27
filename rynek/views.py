@@ -128,7 +128,8 @@ class SearchView(APIView):
             if searched_category == 'wszystkie-kategorie':
                 search_result = Product.objects.filter(title__contains=search)
             elif Category.objects.get(name=searched_category):
-                search_result = Product.objects.filter(category__name=searched_category).filter(title__contains=search)
+                
+                search_result = Product.objects.filter(category__parent_name__name=searched_category).filter(title__contains=search)
             else:
                 messages.success(request, ("Brak produktów w podanej kategorii"))
             return Response({'search_result':search_result,'featured_products':featured, 'categories':categories})    
