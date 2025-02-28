@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 import datetime
 
+from PIL import Image, ImageOps
+
 
 # Prduct categories
 class Category(models.Model):
@@ -87,6 +89,23 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        super(Product, self).save(*args, **kwargs)
+        #featured image resize
+        output_size = (400, 300)
+        with Image.open(self.featured_image.path) as im:
+            ImageOps.cover(im, output_size).save(self.featured_image.path)
+            im.thumbnail(output_size)
+            im.save(self.featured_image.path)
+        
+        #featured image resize
+        lg_output_size = (800, 600)
+        with Image.open(self.images.path) as img:
+            ImageOps.cover(img, lg_output_size).save(self.images.path)
+            img.thumbnail(lg_output_size)
+            img.save(self.images.path)
+          
 
 class FeaturedProducts(models.Model):
     featured = models.ForeignKey(Product, on_delete=models.CASCADE)

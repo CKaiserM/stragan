@@ -1,0 +1,8 @@
+.p_home_img{
+height: 300px;
+width: 100%;
+}
+.p_home_img img{
+    max-width: 100% !important;
+    height: auto !important;
+}
