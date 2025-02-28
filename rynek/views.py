@@ -21,6 +21,9 @@ from rest_framework.views import APIView
 from .models import Product, Profile, FeaturedProducts, Category, Subcategory
 from .forms import SignUpForm, UpdateUserForm, AddressForm
 
+#Navbar rendering (dynamic links) is included in context_processors.py, and put up in settings.py under TEMPLATES.
+
+#Homepage view
 class StraganView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'home.html'
@@ -33,7 +36,7 @@ class StraganView(APIView):
         return Response({'products':products, 'featured_products':featured, 'categories':categories, 'subcategories':subcategories})
 
 
-
+#Profile view
 class ProfileView(APIView):
     renderer_classes= [TemplateHTMLRenderer]
     template_name = 'profile/profile.html'
@@ -108,12 +111,14 @@ class ProfileView(APIView):
             messages.success(request, ("Your Profile Has Been Deleted!"))
             return redirect('home')
 
+#change password
 class ChangePasswordView(PasswordChangeView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy('home')
     template_name = 'profile/change_password.html'
     success_message = "Password has been changed!"   
 
+#search product
 class SearchView(APIView):
     renderer_classes= [TemplateHTMLRenderer]
     template_name = 'product/search.html'
@@ -134,3 +139,38 @@ class SearchView(APIView):
             else:
                 messages.success(request, ("Brak produktów w podanej kategorii"))
             return Response({'search_result':search_result,'featured_products':featured, 'categories':categories})    
+
+#single item view        
+class SingleProductView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'product/p_single.html'
+
+    def get(self, request, slug, pk):
+        single_product = None
+
+        if pk:
+            single_product = Product.objects.get(id=pk)
+        return Response({'single_product':single_product})
+    
+#category view - list subcategories
+class CategoryView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'product/p_category.html'
+
+    def get(self, request, slug, pk):
+        category = None
+
+        if pk:
+            category = Subcategory.objects.filter(parent_name=pk)
+        return Response({'category':category})
+
+#list subcategory items
+class SubcategoryView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'product/p_subcategory.html'
+
+    def get(self, request, slug, pk):
+        subcategory = None
+        if pk:
+            subcategory = Product.objects.filter(category__id=pk)
+        return Response({'subcategory':subcategory})

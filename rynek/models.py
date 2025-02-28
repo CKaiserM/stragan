@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+#from django.utils.text import slugify
 import datetime
+from slugify import slugify
 
 from PIL import Image, ImageOps
 
@@ -9,10 +11,15 @@ from PIL import Image, ImageOps
 # Prduct categories
 class Category(models.Model):
     name = models.CharField(max_length=120)
-
+    slug = models.SlugField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+
+        super(Category, self).save(*args, **kwargs)
     
     class Meta:
         verbose_name_plural = "Categories"
@@ -21,9 +28,22 @@ class Category(models.Model):
 class Subcategory(models.Model):
     name = models.CharField(max_length=120)
     parent_name = models.ForeignKey(Category, related_name='sub_categories', on_delete=models.CASCADE, blank=True, null=True)
+    slug = models.SlugField(null=True, blank=True)
+    image = models.ImageField(blank=True, null=True)
 
     def __str__(self):
         return f'- {self.parent_name} - {self.name}'
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.parent_name.name + ' ' + self.name)
+
+        super(Subcategory, self).save(*args, **kwargs)
+        #featured image resize
+        output_size = (400, 300)
+        with Image.open(self.image.path) as im:
+            ImageOps.cover(im, output_size).save(self.image.path)
+            im.thumbnail(output_size)
+            im.save(self.image.path)
     
     class Meta:
         verbose_name_plural = "Subcategories"
@@ -77,6 +97,7 @@ class Customer(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=120)
+    slug = models.SlugField(null=True, blank=True)
     price = models.DecimalField(default=0, decimal_places=2, max_digits=12)
     unit = models.CharField(max_length=120, default="Kilogram")
     category = models.ForeignKey(Subcategory, on_delete=models.CASCADE, default=1)
@@ -91,6 +112,8 @@ class Product(models.Model):
         return self.title
     
     def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+
         super(Product, self).save(*args, **kwargs)
         #featured image resize
         output_size = (400, 300)

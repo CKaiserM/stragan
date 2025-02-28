@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <h5 class="card-title">{{product.price}}</h5>
-    <p class="card-text">{{product.title}}</p>
+    <p class="card-text"><a href="{% url 'single_product' product.slug product.id %}">Sprawdź</a>{{product.title}}</p>
     <a href="#" class="btn btn-primary">Add to cart</a>
   </div>
 </div>

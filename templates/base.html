@@ -32,7 +32,7 @@
     <script>
         $( function() {
           var availableTags = [
-          {% for product in products %}
+          {% for product in nav_products %}
           "{{product.title}}",
           {% endfor %}
           ];

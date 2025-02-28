@@ -13,14 +13,14 @@
         {% csrf_token %}
         <input id="tags" class="form-control" type="search" placeholder="Czego szukasz?" aria-label="Szukaj" list="datalistOptions" name="search">
         <datalist id="datalistOptions">
-        {% for product in featured_products %}
-        <option value="{{product}}">{{product.featured_image}}</option>
+        {% for featured_products in nav_featured_products %}
+        <option value="{{featured_products.title}}">{{featured_products.title}}</option>
         {% endfor %}
     </datalist>
 
       <select class="form-select" aria-label="Kategorie" name="category">
         <option value="wszystkie-kategorie">Wszystkie kategorie</option>
-        {% for category in categories %}
+        {% for category in nav_categories %}
         <option value="{{category}}">{{category}}</option>
         {% endfor %}
       </select>
@@ -38,9 +38,12 @@
 
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if user.is_authenticated %}
+            {{user}} 
+            {% endif %}
             <i class="fa-solid fa-user"></i>
           </a>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu dropdown-menu-lg-end">
             {% if user.is_authenticated %}
             <li><a class="dropdown-item" href="{% url 'profile' request.user.id %}">Mój Profil</a></li>
             <li><hr class="dropdown-divider"></li>
@@ -66,12 +69,12 @@
               Kategorie
             </a>
             <ul class="dropdown-menu">
-              {% for category in categories %}
-              <li><a class="dropdown-item" href="#"><b>{{category.name}}</b></a></li>
+              {% for category in nav_categories %}
+              <li><a class="dropdown-item" href="{% url 'category' category.slug category.id %}"><b>{{category.name}}</b></a></li>
               
-                {% for subcategory in subcategories %}
+                {% for subcategory in nav_subcategories %}
                   {% if category.name == subcategory.parent_name.name %}
-                  <li><a class="dropdown-item ms-2" href="#">{{subcategory.name}}</a></li>
+                  <li class="ms-2"><a class="dropdown-item" href="{% url 'subcategory' subcategory.slug subcategory.id %}">{{subcategory.name}}</a></li>
                   {% endif %}
                 {% endfor %}
                 <li><hr class="dropdown-divider"></li>
