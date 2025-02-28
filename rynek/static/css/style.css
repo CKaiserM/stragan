@@ -6,3 +6,7 @@ width: 100%;
     max-width: 100% !important;
     height: auto !important;
 }
+.card_link {
+    color: black;
+    text-decoration: none !important;
+}

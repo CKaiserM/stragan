@@ -1,10 +1,13 @@
 <div class="card my-3" style="width: 18rem;">
+  <a class="card_link" href="{% url 'single_product' product.slug product.id %}">
   <div class="p_home_img">
     <img src="{{product.featured_image.url}}" class="card-img-top img-fluid" alt="{{product.title}}">
   </div>
   <div class="card-body">
-    <h5 class="card-title">{{product.price}}</h5>
-    <p class="card-text"><a href="{% url 'single_product' product.slug product.id %}">Sprawdź</a>{{product.title}}</p>
-    <a href="#" class="btn btn-primary">Add to cart</a>
+    <h5 class="card-title">{{product.price}} zł/ {{product.unit}}</h5>
+    <p class="card-text">{{product.title}}</p>
+    <br />
+    <a href="#" class="btn btn-primary">Dodaj do koszyka</a>
   </div>
+</a>
 </div>
