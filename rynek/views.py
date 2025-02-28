@@ -18,7 +18,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Product, Profile, FeaturedProducts, Category
+from .models import Product, Profile, FeaturedProducts, Category, Subcategory
 from .forms import SignUpForm, UpdateUserForm, AddressForm
 
 class StraganView(APIView):
@@ -29,7 +29,8 @@ class StraganView(APIView):
         products = Product.objects.all()
         featured = FeaturedProducts.objects.all()
         categories = Category.objects.all()
-        return Response({'products':products, 'featured_products':featured, 'categories':categories})
+        subcategories = Subcategory.objects.all()
+        return Response({'products':products, 'featured_products':featured, 'categories':categories, 'subcategories':subcategories})
 
 
 
