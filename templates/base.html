@@ -52,29 +52,28 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      $(document).on('click', '#add-to-cart', function(e)
-      {
-        e.preventDefault();
-        $.ajax({
-          type: 'POST',
-          url: '{% url 'cart_add' %}',
-          data: {
-            product_id: $('#add-to-cart').val(),
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            action: 'post'
-          },
+      $("button").on('click', function (e) {
+        let t = (this.id);
+        //console.log(t);
 
-          success: function(json){
-            console.log(json)
-            document.getElementById('cart_quantity').innerHTML = json.ilosc;
-          },
-
-          error: function(xhr, errmsg, err){
-
-          }
-        });
+          e.preventDefault();
+          $.ajax({
+              type: 'POST',
+              url: '{% url 'cart_add' %}',
+              data: {
+          product_id: $("#" + t).val(),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'post'
+              },
+              success: function(json){
+                  //console.log(json)
+                  location.reload();
+              },
+              error: function(xhr, errmsg, err){   
+              }
+          });
       })
-    </script>
 
+      </script>
   </body>
 </html>

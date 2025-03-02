@@ -18,14 +18,16 @@ class KoszykView(APIView):
 
     #get Cart summary
     def get(self, request):
-        return Response({})
+        cart = Cart(request)
+        cart_summary = cart.get_products
+        return Response({'cart_summary':cart_summary})
         
     def add(request):
         cart = Cart(request)
 
         if request.POST.get('action') == 'post':
             product_id = int(request.POST.get('product_id'))
-            
+            print(product_id)
             product = get_object_or_404(Product, id=product_id)
 
 
@@ -35,7 +37,7 @@ class KoszykView(APIView):
             cart_quantity = cart.__len__()
 
             #return response
-            response = JsonResponse({'ilosc': cart_quantity})
+            response = JsonResponse({'Nazwa produktu': product.title})
             
             return response
 
