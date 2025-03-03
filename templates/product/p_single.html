@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="container overflow-hidden text-center">
+  <div class="container overflow-hidden">
     <div class="row my-3">
       <div class="col-8 ps-0">
         <div id="singleProduct" class="carousel slide card">
@@ -33,9 +33,19 @@
       <div class="col">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <button value="" class="btn btn-primary" id="add-to-cart">Dodaj do koszyka</a>
+            <h5 class="card-title">{{single_product.price}} zł/ {{single_product.unit}}</h5>
+            <p class="card-text">Liczba sztuk:</p>
+            <div class="input-group-qty">
+              <input type="button" value="-" class="button-minus" data-field="quantity">
+              {% for key, value in cart_quantities.items %}
+                {% if key == single_product.id|slugify %}
+                  <input id="product_qty_{{single_product.id}}" type="number" step="1" min="1" max="" value="{{value}}" name="quantity" class="quantity-field">
+                {% endif %}
+              {% endfor %}
+              <input type="button" value="+" class="button-plus" data-field="quantity">
+            </div>
+
+            <button type="button" id="add-to-cart{{single_product.id}}" class="btn btn-warning w-100" value="{{ single_product.id }}">Dodaj do koszyka</button>
           </div>
         </div>
       </div>
