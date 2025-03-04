@@ -1,8 +1,17 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from .models import Product, Category, Subcategory, Profile, Address, FeaturedProducts
+from .models import Product, Category, Subcategory, Profile, Address, FeaturedProducts, Customer, Order
 #unregister groups
 admin.site.unregister(Group)
+
+# Register products
+admin.site.register(Product)
+admin.site.register(Order)
+admin.site.register(Customer)
+admin.site.register(Category)
+admin.site.register(Subcategory)
+admin.site.register(Address)
+admin.site.register(FeaturedProducts)
 
 # Combine profile info and user
 class ProfileInline(admin.StackedInline):
@@ -22,11 +31,5 @@ admin.site.unregister(User)
 
 # Register user and profile
 admin.site.register(User, UserAdmin)
-#admin.site.register(Profile)
+admin.site.register(Profile)
 
-# Register products
-admin.site.register(Product)
-admin.site.register(Category)
-admin.site.register(Subcategory)
-admin.site.register(Address)
-admin.site.register(FeaturedProducts)

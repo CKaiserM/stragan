@@ -9,12 +9,11 @@
   <br/> <br/>
 <form method="POST" action="" enctype="multipart/form-data">
 	{% csrf_token %}
-	{{ user_form.as_p }}
-	<br/>
-	{{ profile_form.as_p}}
-	<br/>
-	{{ address_form.as_p}}
+	{{ user_info.as_p }}
+
 	<br/><br/>
+	{{ shipping_address_form.as_p}}
+
 	<!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changePassword">
 	Change Password

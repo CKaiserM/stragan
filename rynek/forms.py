@@ -4,7 +4,8 @@ from localflavor.pl.forms import PLNIPField, PLPostalCodeField, PLProvinceSelect
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm
 from django.contrib.auth.models import User
 
-class AddressForm(forms.ModelForm):
+class UserInfoForm(forms.ModelForm):
+    phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer telefonu'}), required=False)
     city = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Miasto'}), required=True)
     street = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ulica'}), required=True)
     house_number = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer domu'}), required=True)
@@ -14,7 +15,7 @@ class AddressForm(forms.ModelForm):
     voivodeship = PLCountySelect()
 
     class Meta:
-        model = Address
+        model = Profile
         fields = "__all__"
 
 
@@ -22,12 +23,13 @@ class AddressForm(forms.ModelForm):
 
 class SignUpForm(UserCreationForm):
 
-    username = forms.CharField(label="Nazwa użytkownika", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nazwa użytkownika'}))
+    first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Imię'}))
+    last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nazwisko'}))
     email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Adres Email'}))
 
     class Meta:
         model = User
-        fields = ('username','email', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
