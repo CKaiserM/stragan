@@ -150,6 +150,7 @@ class SingleProductView(APIView):
 
         if pk:
             single_product = Product.objects.get(id=pk)
+            
         return Response({'single_product':single_product})
     
 #category view - list subcategories

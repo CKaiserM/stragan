@@ -37,11 +37,9 @@
             <p class="card-text">Liczba sztuk:</p>
             <div class="input-group-qty">
               <input type="button" value="-" class="button-minus" data-field="quantity">
-              {% for key, value in cart_quantities.items %}
-                {% if key == single_product.id|slugify %}
-                  <input id="product_qty_{{single_product.id}}" type="number" step="1" min="1" max="" value="{{value}}" name="quantity" class="quantity-field">
-                {% endif %}
-              {% endfor %}
+
+                  <input id="product_qty" type="number" step="1" min="1" max="" value="1" name="quantity" class="quantity-field">
+
               <input type="button" value="+" class="button-plus" data-field="quantity">
             </div>
 
@@ -65,5 +63,62 @@
       </div>
     </div>
   </div>
+  <script>
 
+    function incrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+      if (!isNaN(currentVal)) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal + 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+    }
+    
+    function decrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+    
+      if (!isNaN(currentVal) && currentVal > 0) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+    }
+    
+    $('.input-group-qty').on('click', '.button-plus', function(e) {
+      incrementValue(e);
+    });
+    
+    $('.input-group-qty').on('click', '.button-minus', function(e) {
+      decrementValue(e);
+    });
+
+    //add product to cart
+    $("button").on('click', function (e) {
+      let t = (this.id);
+      var prod_qty = $("#product_qty").val();
+
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+        product_id: $("#" + t).val(),  
+        product_qty: prod_qty,
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        action: 'post'
+            },
+            success: function(json){
+                location.reload();
+            },
+            error: function(xhr, errmsg, err){   
+            }
+        });
+    });
+    </script>
 {% endblock %}

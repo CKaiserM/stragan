@@ -72,4 +72,101 @@
       </div>
     
   </div>
+  <script>
+    //delete product from cart
+    $(document).on('click', '.delete-product', function(e) {
+
+      e.preventDefault();
+
+      $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_delete' %}',
+        data: {
+          product_id: $(this).data('index'),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'post'
+      },
+
+      success: function(json){
+          location.reload();
+      },
+  
+      error: function(xhr, errmsg, err){
+  
+      }
+
+      });
+    });
+
+    //update product in cart (quantities)
+    function incrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+      if (!isNaN(currentVal)) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal + 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+      var prod_qty = parent.find('input[name=' + fieldName + ']').val();
+      var prod_id = parent.find('input[name=' + fieldName + ']').attr('id').replace('product_qty_', '');
+      $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_update' %}',
+        data: {
+    product_id: prod_id,  
+    product_qty: prod_qty,
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+    action: 'post'
+        },
+        success: function(json){
+            //console.log(json)
+            location.reload();
+        },
+        error: function(xhr, errmsg, err){   
+        }
+    });
+    }
+    
+    function decrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+    
+      if (!isNaN(currentVal) && currentVal > 0) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+      var prod_qty = parent.find('input[name=' + fieldName + ']').val();
+      var prod_id = parent.find('input[name=' + fieldName + ']').attr('id').replace('product_qty_', '');
+      $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_update' %}',
+        data: {
+    product_id: prod_id,  
+    product_qty: prod_qty,
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+    action: 'post'
+        },
+        success: function(json){
+            console.log(json)
+            location.reload();
+        },
+        error: function(xhr, errmsg, err){   
+        }
+    });
+    }
+    
+    $('.input-group-qty').on('click', '.button-plus', function(e) {
+      incrementValue(e);
+    });
+    
+    $('.input-group-qty').on('click', '.button-minus', function(e) {
+      decrementValue(e);
+    });
+
+    </script>
 {% endblock %}

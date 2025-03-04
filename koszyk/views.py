@@ -31,12 +31,12 @@ class KoszykView(APIView):
 
         if request.POST.get('action') == 'post':
             product_id = int(request.POST.get('product_id'))
-            
+            product_qty = int(request.POST.get('product_qty'))
             product = get_object_or_404(Product, id=product_id)
 
 
             #Save session
-            cart.add(product=product, quantity=1)
+            cart.add(product=product, quantity=product_qty)
             cart_quantity = cart.__len__()
 
             #return response
