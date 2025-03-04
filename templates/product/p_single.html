@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="container overflow-hidden text-center">
+  <div class="container overflow-hidden">
     <div class="row my-3">
       <div class="col-8 ps-0">
         <div id="singleProduct" class="carousel slide card">
@@ -33,9 +33,17 @@
       <div class="col">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Dodaj do koszyka</a>
+            <h5 class="card-title">{{single_product.price}} zł/ {{single_product.unit}}</h5>
+            <p class="card-text">Liczba sztuk:</p>
+            <div class="input-group-qty">
+              <input type="button" value="-" class="button-minus" data-field="quantity">
+
+                  <input id="product_qty" type="number" step="1" min="1" max="" value="1" name="quantity" class="quantity-field">
+
+              <input type="button" value="+" class="button-plus" data-field="quantity">
+            </div>
+
+            <button type="button" id="add-to-cart{{single_product.id}}" class="btn btn-warning w-100" value="{{ single_product.id }}">Dodaj do koszyka</button>
           </div>
         </div>
       </div>
@@ -55,5 +63,62 @@
       </div>
     </div>
   </div>
+  <script>
 
+    function incrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+      if (!isNaN(currentVal)) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal + 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+    }
+    
+    function decrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+    
+      if (!isNaN(currentVal) && currentVal > 0) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+    }
+    
+    $('.input-group-qty').on('click', '.button-plus', function(e) {
+      incrementValue(e);
+    });
+    
+    $('.input-group-qty').on('click', '.button-minus', function(e) {
+      decrementValue(e);
+    });
+
+    //add product to cart
+    $("button").on('click', function (e) {
+      let t = (this.id);
+      var prod_qty = $("#product_qty").val();
+
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+        product_id: $("#" + t).val(),  
+        product_qty: prod_qty,
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        action: 'post'
+            },
+            success: function(json){
+                location.reload();
+            },
+            error: function(xhr, errmsg, err){   
+            }
+        });
+    });
+    </script>
 {% endblock %}

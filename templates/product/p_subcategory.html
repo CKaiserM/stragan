@@ -3,13 +3,8 @@
 {% load rest_framework %}
 {% block content %}
 <div class="container text-center">
-    <div class="row">
-        {% for product in subcategory %}
-        <div class="col">
-            {% include 'product/p_home.html'%}
-          </div>
-        {% endfor %}
 
-    </div>
-  </div>
+  {% include 'product/p_list.html'%}
+
+</div>
 {% endblock %}

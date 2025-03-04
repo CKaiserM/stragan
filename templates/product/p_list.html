@@ -1,0 +1,26 @@
+{% for product in subcategory %}
+<a class="card_link" href="{% url 'single_product' product.slug product.id %}">
+<div class="card mt-3" >
+    <div class="row g-0">
+      <div class="col-md-3">
+        <img src="{{product.featured_image.url}}" class="img-fluid rounded-start p-2" alt="{{product.title}}">
+      </div>
+      <div class="col-md-3">
+        <div class="card-body">
+          <h5 class="card-title">{{product.title}}</h5>
+          <p class="card-text"></p>
+          
+        </div>
+      </div>
+      <div class="col-md-1">
+        <div class="vr my-2 prod_list"></div>
+      </div>
+      <div class="col-md-5">
+        <div class="card-body">
+            <h5 class="card-title">{{product.price}} zł/ {{product.unit}}</h5>
+            <button type="button" id="add-to-cart{{product.id}}" class="btn btn-warning" value="{{ product.id }}">Dodaj do koszyka</button>
+        </div>  
+      </div>  
+    </div>
+  </div></a>
+  {% endfor %}
