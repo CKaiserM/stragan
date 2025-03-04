@@ -1,0 +1,96 @@
+{% load static %} 
+<nav class="navbar navbar-expand-lg main-nav shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        Stragan
+    </a>
+
+   
+
+    <div class="input-group">
+      
+      <form class="input-group" action="{% url 'search_product' %}" method="POST">
+        {% csrf_token %}
+        <input id="tags" class="form-control" type="search" placeholder="Czego szukasz?" aria-label="Szukaj" list="datalistOptions" name="search">
+        <datalist id="datalistOptions">
+        {% for featured_products in nav_featured_products %}
+        <option value="{{featured_products.title}}">{{featured_products.title}}</option>
+        {% endfor %}
+    </datalist>
+
+      <select class="form-select" aria-label="Kategorie" name="category">
+        <option value="wszystkie-kategorie">Wszystkie kategorie</option>
+        {% for category in nav_categories %}
+        <option value="{{category}}">{{category}}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </form>
+    </div>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarScroll">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'cart_summary' %}"><i class="fa-solid fa-basket-shopping"></i>
+              <span class="badge text-bg-secondary" id="cart_quantity">
+                {{cart|length}}
+              </span>
+            </a>
+          </li>
+        
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {% if user.is_authenticated %}
+              {{user}} 
+              {% endif %}
+              <i class="fa-solid fa-user"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-lg-end">
+              {% if user.is_authenticated %}
+              <li><a class="dropdown-item" href="{% url 'profile' request.user.id %}">Mój Profil</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a></li>
+              {% else %}
+              <li><a class="dropdown-item" href="{% url 'register' %}">Rejestracja</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'login' %}">Logowanie</a></li>
+              {% endif %}
+            </ul>
+        
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+     
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Kategorie
+            </a>
+            <ul class="dropdown-menu">
+              {% for category in nav_categories %}
+              <li><a class="dropdown-item" href="{% url 'category' category.slug category.id %}"><b>{{category.name}}</b></a></li>
+              
+                {% for subcategory in nav_subcategories %}
+                  {% if category.name == subcategory.parent_name.name %}
+                  <li class="ms-2"><a class="dropdown-item" href="{% url 'subcategory' subcategory.slug subcategory.id %}">{{subcategory.name}}</a></li>
+                  {% endif %}
+                {% endfor %}
+                <li><hr class="dropdown-divider"></li>
+              {% endfor %}
+              
+            </ul>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </nav>

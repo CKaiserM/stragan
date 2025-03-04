@@ -1,0 +1,170 @@
+{% extends 'base.html' %} 
+
+{% load rest_framework %}
+{% block content %}
+<div class="container">
+  
+    <div class="row g-0">
+      <div class="col-md-8">
+        {% for item in cart_summary %}
+        <div class="card my-3">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="{{item.featured_image.url}}" class="img-fluid rounded-start" alt="{{item.title}}">
+            </div>
+            <div class="col-md-4">
+              <div class="card-body">
+                <h5 class="card-title">{{item.title}}</h5>
+                <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
+                <p class="card-text">Liczba sztuk:</p>
+                <div class="input-group-qty">
+                  <input type="button" value="-" class="button-minus" data-field="quantity">
+                  {% for key, value in cart_quantities.items %}
+                    {% if key == item.id|slugify %}
+                      <input id="product_qty_{{item.id}}" type="number" step="1" min="1" max="" value="{{value}}" name="quantity" class="quantity-field">
+                    {% endif %}
+                  {% endfor %}
+                  <input type="button" value="+" class="button-plus" data-field="quantity">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 text-end p-3">
+              <div class="text-end">
+              <button type="button" class="btn btn-link text-end delete-product" data-index="{{item.id}}">
+                <i class="fa-regular fa-trash-can text-secondary fs-3 mt-2"></i>
+              </button></div>
+              <h5 class="card-title">
+                {% for key, value in cart_subtotal.items %}
+                  {% if key == item.id|slugify %}
+                    {{value}} zł
+                  {% endif %}
+                {% endfor %}
+              </h5>
+              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
+            </div>
+          </div>
+          
+          <div class="row g-0">
+            <div class="col-md-12 text-end p-3">
+              <div class="m-2">
+              <hr/>
+              </div>
+
+              <p class="card-text">Z dostawą:
+                </p>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+        <div class="col-md-4">
+          <div class="card m-3">
+            <div class="card-body">
+              <p class="card-text">Wartość produktów: {{cart_total}}</p>
+              <p class="card-text">Dostawa:</p>
+              <hr/>
+              <p class="card-text">Razem z dostawą: <h5>500 zł</h5></p>
+              <button type="button" class="btn btn-success w-100">Dostawa i płatność</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+  <script>
+    //delete product from cart
+    $(document).on('click', '.delete-product', function(e) {
+
+      e.preventDefault();
+
+      $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_delete' %}',
+        data: {
+          product_id: $(this).data('index'),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'post'
+      },
+
+      success: function(json){
+          location.reload();
+      },
+  
+      error: function(xhr, errmsg, err){
+  
+      }
+
+      });
+    });
+
+    //update product in cart (quantities)
+    function incrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+      if (!isNaN(currentVal)) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal + 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+      var prod_qty = parent.find('input[name=' + fieldName + ']').val();
+      var prod_id = parent.find('input[name=' + fieldName + ']').attr('id').replace('product_qty_', '');
+      $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_update' %}',
+        data: {
+    product_id: prod_id,  
+    product_qty: prod_qty,
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+    action: 'post'
+        },
+        success: function(json){
+            location.reload();
+        },
+        error: function(xhr, errmsg, err){   
+        }
+    });
+    }
+    
+    function decrementValue(e) {
+      e.preventDefault();
+      var fieldName = $(e.target).data('field');
+      var parent = $(e.target).closest('div');
+      var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+    
+      if (!isNaN(currentVal) && currentVal > 0) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+      }
+      var prod_qty = parent.find('input[name=' + fieldName + ']').val();
+      var prod_id = parent.find('input[name=' + fieldName + ']').attr('id').replace('product_qty_', '');
+      $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_update' %}',
+        data: {
+    product_id: prod_id,  
+    product_qty: prod_qty,
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+    action: 'post'
+        },
+        success: function(json){
+            location.reload();
+        },
+        error: function(xhr, errmsg, err){   
+        }
+    });
+    }
+    
+    $('.input-group-qty').on('click', '.button-plus', function(e) {
+      incrementValue(e);
+    });
+    
+    $('.input-group-qty').on('click', '.button-minus', function(e) {
+      decrementValue(e);
+    });
+
+    </script>
+{% endblock %}

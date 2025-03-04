@@ -1,0 +1,37 @@
+<div class="card my-3" style="width: 18rem;">
+  <a class="card_link" href="{% url 'single_product' product.slug product.id %}">
+  <div class="p_home_img">
+    <img src="{{product.featured_image.url}}" class="card-img-top img-fluid" alt="{{product.title}}">
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{product.price}} zł/ {{product.unit}}</h5>
+    <p class="card-text">{{product.title}}</p>
+    <br /></a>
+    <button type="button" id="add-to-cart{{product.id}}" class="btn btn-primary" value="{{ product.id }}">Dodaj do koszyka</button>
+  </div>
+
+</div>
+<script>
+
+  //add product to cart
+  $("button").on('click', function (e) {
+    let t = (this.id);
+    var prod_qty = "1";
+      e.preventDefault();
+      $.ajax({
+          type: 'POST',
+          url: '{% url 'cart_add' %}',
+          data: {
+      product_id: $("#" + t).val(),  
+      product_qty: prod_qty,
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+      action: 'post'
+          },
+          success: function(json){
+              location.reload();
+          },
+          error: function(xhr, errmsg, err){   
+          }
+      });
+  });
+  </script>
