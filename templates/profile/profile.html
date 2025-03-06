@@ -2,6 +2,7 @@
 {% load static %} 
 {% block content %} 
 {% if profile %}
+{% if request.user.id == profile.user.id %}
 <div class="container-xl">
   <nav class="mt-2" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -39,43 +40,78 @@
   </div>
 
   <div class="row">
-    <div class="col-6">
-      <h1></h1>
-    </div>
+    <div class="col-12 position-relative ">
+      <div class="card">
+        <div class="card-body">
 
-    <div class="col-3 position-relative ">
-      {% if request.user.id == profile.user.id %}
-      <a href="{% url 'update' %}" class="btn btn-outline-secondary float-end m-2">
-        <i class="fa-solid fa-user-pen"></i>
-      </a>
-      <button type="button" class="btn btn-danger float-end m-2" data-bs-toggle="modal" data-bs-target="#deleteProfileModal">
-        <i class="fa-solid fa-person-circle-minus"></i>
-      </button>
-      <div class="modal fade" id="deleteProfileModal" tabindex="-1" aria-labelledby="deleteProfileModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="deleteProfileModalLabel">Please confirm</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="card-title">Ustawienia konta</h5>
+          <div class="row">
+            <div class="col-8">
+              <h6 class="card-subtitle mt-2 text-body-secondary">Twoje dane</h6>
+              <p class="card-text">Informacje o Tobie i Twoim koncie</p>
             </div>
-            <div class="modal-body">
-              To remove your profile please confirm.
+            <div class="col-4">
+              <a href="{% url 'update' %}" class="float-end m-2">
+                ZMIEŃ USTAWIENIA
+              </a>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-danger">      
-                <a href="{% url 'delete_profile' %}" class="modal-link">  
-                  Remove profile
-                </a>
+          </div>
+          <div class="row">
+            <div class="col-8">
+              <h6 class="card-subtitle mt-2 text-body-secondary">Adresy do wysyłki</h6>
+              <p class="card-text">Zarządzaj swoimi adresami</p>
+            </div>
+            <div class="col-4">
+              <a href="{% url 'update' %}" class="float-end m-2">
+                ZMIEŃ USTAWIENIA
+              </a>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-8">
+              <h6 class="card-subtitle mt-2 text-body-secondary">Usuń konto</h6>
+              <p class="card-text">Usuwanie profilu</p>
+            </div>
+            <div class="col-4">
+              <button type="button" class="btn btn-danger float-end m-2" data-bs-toggle="modal" data-bs-target="#deleteProfileModal">
+                <i class="fa-solid fa-person-circle-minus"></i>
               </button>
+              <div class="modal fade" id="deleteProfileModal" tabindex="-1" aria-labelledby="deleteProfileModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="deleteProfileModalLabel">Usuwanie profilu</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Aby usunąć profil, proszę potwierdzić.
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-danger">      
+                        <a href="{% url 'delete_profile' %}" class="modal-link link-cw">  
+                          Usuń profil
+                        </a>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      {% endif %}
+    </div>
+  </div>
+
+
+
+
+
     </div>
   </div>
 </div>
- 
+{% endif %} 
 {% endif %} 
 {% endblock %}

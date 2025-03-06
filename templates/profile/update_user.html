@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-
 {% block content %}
+<div class="container-xl">
 <nav class="m-2" aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'home' %}">Stragan</a></li>
@@ -8,25 +8,79 @@
       <li class="breadcrumb-item active" aria-current="page">Aktualizacja profilu</li>
     </ol>
   </nav>
-<div class="col-md-6 offset-md-3">
-<h1>Update Profile</h1>
+
+<h1>Dane konta</h1>
 <br/>
+<div class="card">
+	<div class="card-body">
+	  <h6 class="card-title text-uppercase">imię i nazwisko</h6>
+	  <p class="card-text">{{current_user.first_name}} {{current_user.last_name}}</p>
+	  <!-- Button trigger modal -->
+		<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#nameChange">ZMIEŃ
+		</button>
+	</div>
 
+	<div class="card-body">
+		<h6 class="card-title text-uppercase">e-mail</h6>
+		<p class="card-text">{{current_user.user.email}}</p>
+		<!-- Button trigger modal -->
+		  <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#emailChange">ZMIEŃ
+		  </button>
+		  	<!-- Button trigger modal -->
+	<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#changePassword">
+		Zmień hasło
+	</button>
+	</div>
+
+	<div class="card-body">
+		<h6 class="card-title text-uppercase">telefon komórkowy</h6>
+		<p class="card-text">{{current_user.phone}}</p>
+		<!-- Button trigger modal -->
+		  <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#phoneChange">ZMIEŃ
+		  </button>
+	</div>
+  </div>
   <br/> <br/>
-<form method="POST" action="" enctype="multipart/form-data">
-	{% csrf_token %}
-	{{ user_info.as_p }}
+  <div class="card">
+	<div class="card-body">
+	  <h6 class="card-title text-uppercase">Twój adres</h6>
+	  <p class="card-text">{{current_user.house_and_street_no}}</p>
+	  <p class="card-text">{{current_user.postal_code}} {{current_user.city}}</p>
+	  <!-- Button trigger modal -->
+		<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addressChange">ZMIEŃ
+		</button>
+	</div>
 
-	<br/><br/>
-	{{ shipping_address_form.as_p}}
+	<div class="card-body">
+		<h6 class="card-title text-uppercase">Adres do wysyłki</h6>
+		<p class="card-text">{{shipping_user.shipping_house_and_street_no}}</p>
+		<p class="card-text">{{shipping_user.shipping_postal_code}} {{shipping_user.shipping_city}}</p>
+		<!-- Button trigger modal -->
+		  <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#shippingaddressChange">ZMIEŃ
+		  </button>
+	  </div>
+  </div>
+  <br/> <br/>
+  <div class="card visually-hidden">
+	<div class="card-body">
+	  <h6 class="card-title text-uppercase">Dane firmy</h6>
+	  <p class="card-text">{{current_user.company_name}}</p>
+	  <p class="card-text">{{current_user.nip}}</p>
+	  <p class="card-text">{{current_user.regon}}</p>
+	  <!-- Button trigger modal -->
+		<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#addressChange">ZMIEŃ
+		</button>
+	</div>
 
-	<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changePassword">
-	Change Password
-  </button>
-  <br/><br/>
-  	<button type="submit" class="btn btn-secondary">Update Profile</button>
-</form>
+	<div class="card-body">
+		<h6 class="card-title text-uppercase">Adres do wysyłki</h6>
+		<p class="card-text">{{shipping_user.shipping_house_and_street_no}}</p>
+		<p class="card-text">{{shipping_user.shipping_postal_code}} {{shipping_user.shipping_city}}</p>
+		<!-- Button trigger modal -->
+		  <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#shippingaddressChange">ZMIEŃ
+		  </button>
+	  </div>
+  </div>
 
 </div>
 
@@ -35,17 +89,171 @@
 	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 	  <div class="modal-content">
 		<div class="modal-header">
-		  <h1 class="modal-title fs-5" id="changePasswordLabel">Please confirm</h1>
+		  <h1 class="modal-title fs-5" id="changePasswordLabel">Prosze potwierdzić</h1>
 		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		</div>
 		<div class="modal-body">
-		  Are you willing to change your password?
+		  Zmienić hasło?
 		</div>
 		<div class="modal-footer">
-		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-		  <button type="button" class="btn btn-primary"><a class="modal-link" href="{% url 'change_password' %}">Change Password</a></button>
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+		  <button type="button" class="btn btn-primary"><a class="modal-link" href="{% url 'change_password' %}">Zmień hasło</a></button>
 		</div>
 	  </div>
 	</div>
   </div>
+</div>
+
+
+<!-- Modal -->
+<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+	{% csrf_token %}
+<div class="modal fade" id="nameChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="nameChangeLabel" aria-hidden="true">
+	<div class="modal-dialog">
+
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="nameChangeLabel">Zmień imię i nazwisko</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Możesz dokonać zmiany imienia i nazwiska tylko w <b>specjalnych przypadkach</b>, gdy zmiana jest potwierdzona sądownie lub administracyjnie.</p>
+				<div class="form-check form-check-inline">
+					<div class="input-group">
+						<span class="input-group-text">Imię i Nazwisko</span>
+						{{user_form.first_name}}
+						{{user_form.last_name}}
+					</div>
+				</div>
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+					<button type="submit" class="btn btn-primary">Zatwierdź</button>
+				</div>	
+		</div>
+	</div>
+
+</div>
+</form>
+
+<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+	{% csrf_token %}
+<div class="modal fade" id="emailChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emailChangeLabel" aria-hidden="true">
+	<div class="modal-dialog">
+
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="emailChangeLabel">Zmień e-mail</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				
+						{{user_form.email}}
+
+				<p>Ze względów bezpieczeństwa, poprosimy Cię o ponowne zalogowanie.</p> 
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+					<button type="submit" class="btn btn-primary">Zatwierdź</button>
+				</div>	
+		</div>
+	</div>
+</div>
+</form>
+
+<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+	{% csrf_token %}
+	<div class="modal fade" id="phoneChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="phoneChangeLabel" aria-hidden="true">
+		<div class="modal-dialog">
+	
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="phoneChangeLabel">Zmień e-mail</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>Ustaw telefon</p>
+							{{user_info.phone}}
+	
+					
+				</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+						<button type="submit" class="btn btn-primary">Zatwierdź</button>
+					</div>	
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+
+<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+	{% csrf_token %}
+<div class="modal fade" id="addressChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addressChangeLabel" aria-hidden="true">
+	<div class="modal-dialog">
+
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="addressChangeLabel">Zmień adres</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="form-check form-check-inline">
+					<div class="input-group">
+				{{user_info.house_and_street_no}}
+					</div>
+				</div>
+				<div class="form-check form-check-inline">
+					<div class="input-group">
+						{{user_info.postal_code}}
+						{{user_info.city}}
+					</div>
+				</div>
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+					<button type="submit" class="btn btn-primary">Zatwierdź</button>
+				</div>	
+		</div>
+	</div>
+
+</div>
+</form>
+
+<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+	{% csrf_token %}
+<div class="modal fade" id="shippingaddressChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="shippingaddressChange" aria-hidden="true">
+	<div class="modal-dialog">
+
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="shippingaddressChange">Zmień adres</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="form-check form-check-inline">
+					<div class="input-group">
+						{{shipping_address_form.shipping_full_name}}
+						{{shipping_address_form.shipping_house_and_street_no}}
+					</div>
+				</div>
+				<div class="form-check form-check-inline">
+					<div class="input-group">
+						
+						{{shipping_address_form.shipping_postal_code}}
+						{{shipping_address_form.shipping_city}}
+					</div>
+				</div>
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+					<button type="submit" class="btn btn-primary">Zatwierdź</button>
+				</div>	
+		</div>
+	</div>
+
+</div>
+</form>
+
+</div>
 {% endblock %}

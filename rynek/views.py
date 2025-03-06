@@ -108,18 +108,26 @@ class ProfileView(APIView):
             current_user = Profile.objects.get(user__id=request.user.id)
             shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
             # Get Forms
-            #user_form = UpdateUserForm(request.POST or None, instance=current_user)
+            user_form = UpdateUserForm(request.POST or None, instance=current_user)
             user_info = UserInfoForm(request.POST or None, instance=current_user)
             shipping_address_form = ShippingAddressForm(request.POST or None, instance=shipping_user)
 
-            if user_info.is_valid() or shipping_address_form.is_valid():
-                user_info.save()
-                shipping_address_form.save()
-                login(request, current_user)
-                messages.success(request, ("Profil został zaktualizowany!"))
-                return redirect('home')
+            if user_info.is_valid() or shipping_address_form.is_valid() or user_form.is_valid():
+                #save user info
+                if user_form.is_valid():
+                    user_info.save()
+                #save shipping address
+                if shipping_address_form.is_valid():
+                    shipping_address_form.save()
 
-            return render(request, "profile/update_user.html", {'user_info':user_info, 'shipping_address_form':shipping_address_form})
+                if user_form.is_valid():
+                    user_form.save()
+                messages.success(request, ("Profil został zaktualizowany!"))
+                return redirect(request.META.get("HTTP_REFERER"))
+            
+            
+
+            return render(request, "profile/update_user.html", {'current_user':current_user, 'shipping_user':shipping_user, 'user_form':user_form, 'user_info':user_info, 'shipping_address_form':shipping_address_form})
         else:
             messages.success(request, ("You Must Be Logged In To View That Page..."))
             return redirect('home')

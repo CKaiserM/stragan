@@ -74,15 +74,11 @@ class Profile(models.Model):
     company_logo = models.ImageField(null=True, blank=True)
     nip = models.CharField(max_length=20, null=True, blank=True)
     regon = models.CharField(max_length=20, null=True, blank=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True, default="brak numeru")
     #address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    street = models.CharField(max_length=255, default='')
-    house_number = models.CharField(max_length=5, default='')
-    flat_number = models.IntegerField(null=True, blank=True)
+    house_and_street_no = models.CharField(max_length=255, default='')
     city = models.CharField(max_length=120, default='')
     postal_code = models.CharField(max_length=6, default='')
-    province = models.CharField(max_length=32, default='')
-    voivodeship = models.CharField(max_length=32, default='')
 
     old_cart = models.CharField(max_length=500, blank=True, null=True)
 

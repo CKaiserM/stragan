@@ -7,16 +7,14 @@ from django.contrib.auth.models import User
 class UserInfoForm(forms.ModelForm):
     phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer telefonu'}), required=False)
     city = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Miasto'}), required=True)
-    street = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ulica'}), required=True)
-    house_number = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer domu'}), required=True)
-    flat_number = forms.IntegerField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer mieszkania'}), required=False)
+    house_and_street_no = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ulica i numer'}), required=True)
     postal_code = PLPostalCodeField()
-    province = PLProvinceSelect()
-    voivodeship = PLCountySelect()
+
 
     class Meta:
         model = Profile
-        fields = "__all__"
+        fields = ('phone', 'city', 'house_and_street_no', 'postal_code')
+
 
 
 # Sign-Up form
@@ -64,3 +62,11 @@ class UpdateUserForm(UserChangeForm):
         self.fields['username'].widget.attrs['placeholder'] = 'Nazwa użytkownika'
         self.fields['username'].label = ''
         self.fields['username'].help_text = '<span class="form-text text-muted"><small>Wymagane. 150 znaków lub mniej. Tylko litery, cyfry i @/./+/-/_.</small></span>'
+
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['first_name'].widget.attrs['placeholder'] = 'Imię'
+        self.fields['first_name'].label = ''
+
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['placeholder'] = 'Nazwisko'
+        self.fields['last_name'].label = ''

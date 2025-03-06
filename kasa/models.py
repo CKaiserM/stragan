@@ -6,14 +6,11 @@ class ShippingAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     #address = models.ForeignKey(Address, on_delete=models.CASCADE)
     shipping_full_name = models.CharField(max_length=255)
-    shipping_email = models.CharField(max_length=255)
-    shipping_street = models.CharField(max_length=255, default='')
-    shipping_house_number = models.CharField(max_length=5, default='')
-    shipping_flat_number = models.IntegerField(null=True, blank=True)
+    shipping_email = models.CharField(max_length=255, blank=True, null=True, default='')
+    shipping_house_and_street_no = models.CharField(max_length=255, default='')
     shipping_city = models.CharField(max_length=120, default='')
     shipping_postal_code = models.CharField(max_length=6, default='')
-    shipping_province = models.CharField(max_length=32, default='')
-    shipping_voivodeship = models.CharField(max_length=32, default='')
+
 
     class Meta:
         verbose_name_plural = "Adres wysyłki"
