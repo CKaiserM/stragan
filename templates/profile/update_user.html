@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<nav class="m-2" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Stragan</a></li>
+	  <li class="breadcrumb-item"><a href="{% url 'profile' request.user.id %}">Mój profil</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Aktualizacja profilu</li>
+    </ol>
+  </nav>
 <div class="col-md-6 offset-md-3">
 <h1>Update Profile</h1>
 <br/>

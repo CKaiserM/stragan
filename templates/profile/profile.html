@@ -3,9 +3,44 @@
 {% block content %} 
 {% if profile %}
 <div class="container-xl">
+  <nav class="mt-2" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Stragan</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Mój profil</li>
+    </ol>
+  </nav>
+  <div class="card my-3">
+    <div class="row g-0 p-2">
+
+      <div class="col-md-4">
+        <div class="card-body">
+          <h5 class="card-title">Cześć {{ profile.first_name }}!</h5>
+          <p class="card-text">{{profile.user.email}}</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        {% if profile.company_logo %}
+        <img src="{{ profile.company_logo.url }}" class="img-fluid rounded-circle" alt="{{profile.first_name}}" width="150" height="150" >
+        {% else %}
+        <img src="{% static 'images/default_profile_pic.png' %}" class="img-fluid rounded-circle" alt="{{profile.first_name}}" width="150" height="150" >
+        {% endif %}
+      </div>
+      <div class="col-md-1">
+        <div class="vr h-75 my-2"></div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-body">
+          <p class="card-title">Jesteś z nami:</p>
+          <h5 class="card-title">{{ profile.user.date_joined|timesince}}!</h5>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-6">
-      <h1>Cześć {{ profile.first_name }}</h1>
+      <h1></h1>
     </div>
 
     <div class="col-3 position-relative ">

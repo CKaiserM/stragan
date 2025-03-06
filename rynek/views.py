@@ -180,7 +180,7 @@ class CategoryView(APIView):
 
     def get(self, request, slug, pk):
         category = None
-
+        
         if pk:
             category = Subcategory.objects.filter(parent_name=pk)
         return Response({'category':category})
