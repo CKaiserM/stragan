@@ -40,7 +40,12 @@
                   {% endif %}
                 {% endfor %}
               </h5>
+              {% if item.is_on_sale %}
               <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
+              {% else %}
+              <p class="card-text">{{item.price_on_sale}} zł/ {{item.unit}}</p>
+              {% endif %}
+              
             </div>
           </div>
           
@@ -65,7 +70,7 @@
               <p class="card-text">Dostawa:</p>
               <hr/>
               <p class="card-text">Razem z dostawą: <h5>500 zł</h5></p>
-              <button type="button" class="btn btn-success w-100">Dostawa i płatność</button>
+              <a href="{% url 'checkout' %}" type="button" class="btn btn-success w-100">Dostawa i płatność</a>
             </div>
           </div>
         </div>

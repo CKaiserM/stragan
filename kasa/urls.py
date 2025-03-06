@@ -6,5 +6,5 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('payment_success', views.PaymentSuccessView.as_view(), name="payment_success"),
-
+    path('checkout', views.CheckoutView.as_view(), name="checkout"),
 ]
