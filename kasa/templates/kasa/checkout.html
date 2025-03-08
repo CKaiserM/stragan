@@ -35,9 +35,9 @@
                 {% endfor %}
               </h5>
               {% if item.is_on_sale %}
-              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
-              {% else %}
               <p class="card-text">{{item.price_on_sale}} zł/ {{item.unit}}</p>
+              {% else %}
+              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>              
               {% endif %}
             </div>
           </div>
@@ -67,6 +67,23 @@
                 <!-- Button trigger modal -->
                   <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#shippingaddressChange">ZMIEŃ
                   </button>
+                  {% else %}
+                  <form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                              {{shipping_address_form.shipping_full_name}}
+                              <br/>
+                              {{shipping_address_form.shipping_house_and_street_no}}     
+                              <br/>
+                              {{shipping_address_form.shipping_postal_code}}
+                              <br/>
+                              {{shipping_address_form.shipping_city}}
+                              <br/>
+                              {{shipping_address_form.shipping_country}}
+                              <br/>
+                            <button type="submit" class="btn btn-primary">Zatwierdź</button>
+
+                  </form>
                   {% endif %}
               </div>
           </div>
@@ -86,4 +103,40 @@
       </div>
     
   </div>
+
+  <form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div class="modal fade" id="shippingaddressChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="shippingaddressChange" aria-hidden="true">
+    <div class="modal-dialog">
+  
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="shippingaddressChange">Zmień adres</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-check form-check-inline">
+            <div class="input-group">
+              {{shipping_address_form.shipping_full_name}}
+              {{shipping_address_form.shipping_house_and_street_no}}
+            </div>
+          </div>
+          <div class="form-check form-check-inline">
+            <div class="input-group">
+              
+              {{shipping_address_form.shipping_postal_code}}
+              {{shipping_address_form.shipping_city}}
+              {{shipping_address_form.shipping_country}}
+            </div>
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+            <button type="submit" class="btn btn-primary">Zatwierdź</button>
+          </div>	
+      </div>
+    </div>
+  
+  </div>
+  </form>
   {% endblock %}

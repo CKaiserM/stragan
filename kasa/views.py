@@ -22,7 +22,7 @@ from rest_framework.views import APIView
 from koszyk.cart import Cart
 from rynek.models import Product
 from kasa.forms import ShippingAddressForm
-from kasa.models import ShippingAddress
+from kasa.models import ShippingAddress, ShippingMethod
 
 class PaymentSuccessView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -40,13 +40,16 @@ class CheckoutView(APIView):
         cart = Cart(request)
         cart_checkout = cart.get_products
         cart_quantities = cart.get_quantity
-        cart_total = cart.get_cart_total
-        cart_subtotal = cart.get_cart_subtotal
-        shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
+        cart_total = cart.get_cart_total()
+        cart_subtotal = cart.get_cart_subtotal()
+        shipping_methods = ShippingMethod.objects.all()
+        
+        
 
         if request.user.is_authenticated:
+            shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
             shipping_address_form = ShippingAddressForm(request.POST or None, instance=shipping_user)
-            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form, 'shipping_user':shipping_user})
+            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form, 'shipping_user':shipping_user, 'shipping_cost':shipping_methods})
         else:
             shipping_address_form = ShippingAddressForm(request.POST or None)
-            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form})
+            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form, 'shipping_cost':shipping_methods})

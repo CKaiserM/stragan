@@ -8,7 +8,7 @@ class ShippingAddressForm(forms.ModelForm):
     shipping_city = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Miasto'}), required=True)
     shipping_house_and_street_no = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ulica'}), required=True)
     shipping_postal_code = PLPostalCodeField()
-
+    shipping_country = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Kraj'}), required=True)
 
     class Meta:
         model = ShippingAddress
@@ -23,7 +23,7 @@ class InvoiceForm(forms.ModelForm):
     company_city = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Miasto'}), required=True)
     company_house_and_street_no = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ulica i numer'}), required=True)
     company_postal_code = PLPostalCodeField()
-
+    company_country = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Kraj'}), required=True)
 
     class Meta:
         model = InvoiceDetails

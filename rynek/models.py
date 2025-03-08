@@ -70,16 +70,11 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=120, null=True, blank=True)
     last_name = models.CharField(max_length=120, null=True, blank=True)
     is_company = models.BooleanField(default=False)
-    company_name = models.CharField(max_length=120, null=True, blank=True)
-    company_logo = models.ImageField(null=True, blank=True)
-    nip = models.CharField(max_length=20, null=True, blank=True)
-    regon = models.CharField(max_length=20, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True, default="brak numeru")
-    #address = models.ForeignKey(Address, on_delete=models.CASCADE)
     house_and_street_no = models.CharField(max_length=255, default='')
     city = models.CharField(max_length=120, default='')
     postal_code = models.CharField(max_length=6, default='')
-
+    country = models.CharField(max_length=255, default='Polska')
     old_cart = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
@@ -87,7 +82,9 @@ class Profile(models.Model):
     
     class Meta:
         verbose_name_plural = "Profile użytkowników"
-    
+
+
+
 # Create a seller profile
 def create_profile(sender, instance, created, **kwargs):
     if created:
@@ -95,6 +92,25 @@ def create_profile(sender, instance, created, **kwargs):
         user_profile.save()
 post_save.connect(create_profile, sender=User)
 
+class CompanyProfile(models.Model):
+    user = models.OneToOneField(Profile, on_delete=models.CASCADE)
+    date_modified = models.DateTimeField(User, auto_now=True)
+    company_name = models.CharField(max_length=120, null=True, blank=True)
+    company_logo = models.ImageField(null=True, blank=True)
+    nip = models.CharField(max_length=20, null=True, blank=True)
+    regon = models.CharField(max_length=20, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True, default="brak numeru")
+    house_and_street_no = models.CharField(max_length=255, default='')
+    city = models.CharField(max_length=120, default='')
+    postal_code = models.CharField(max_length=6, default='')
+    country = models.CharField(max_length=255, default='Polska')
+    payment_methods = models.CharField(max_length=255, blank=True, null=True) 
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+    
+    class Meta:
+        verbose_name_plural = "Profile użytkowników"
 #Customer
 
 class Customer(models.Model):
@@ -120,6 +136,7 @@ class Product(models.Model):
     description = models.TextField(null=True, blank=True)
     featured_image = models.ImageField(upload_to='uploads/product/')
     images = models.ImageField(upload_to='uploads/product/')
+    status = models.BooleanField(default=True)
 
     is_on_sale = models.BooleanField(default=False)
     price_on_sale = models.DecimalField(default=0, decimal_places=2, max_digits=12)
@@ -157,19 +174,3 @@ class FeaturedProducts(models.Model):
     class Meta:
         verbose_name_plural = "Sponsorowane produkty"
 
-class Order(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    
-    shipping_address = models.ForeignKey(Address, on_delete=models.CASCADE, default='')
-    quantity = models.IntegerField(default=1)
-    
-    phone = models.CharField(max_length=20)
-    date = models.DateField(default=datetime.datetime.today)
-    status = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.product
-    
-    class Meta:
-        verbose_name_plural = "Zamówienia"

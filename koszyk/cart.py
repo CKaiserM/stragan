@@ -1,4 +1,5 @@
 from rynek.models import Product, Profile
+from kasa.models import ShippingMethod
 
 class Cart():
     def __init__(self, request):
@@ -100,6 +101,7 @@ class Cart():
             for product in products_in_carts:
                 if product.id == key:
                     total = total + (product.price * value)
+
         return total
     
     def get_cart_subtotal(self):

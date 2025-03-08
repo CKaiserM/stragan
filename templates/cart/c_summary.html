@@ -41,25 +41,15 @@
                 {% endfor %}
               </h5>
               {% if item.is_on_sale %}
-              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
-              {% else %}
               <p class="card-text">{{item.price_on_sale}} zł/ {{item.unit}}</p>
+              {% else %}
+              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>              
               {% endif %}
               
             </div>
           </div>
           
-          <div class="row g-0">
-            <div class="col-md-12 text-end p-3">
-              <div class="m-2">
-              <hr/>
-              </div>
 
-              <p class="card-text">Z dostawą:
-                </p>
-
-            </div>
-          </div>
         </div>
         {% endfor %}
         </div>
@@ -67,9 +57,9 @@
           <div class="card m-3">
             <div class="card-body">
               <p class="card-text">Wartość produktów: {{cart_total}}</p>
-              <p class="card-text">Dostawa:</p>
+              <p class="card-text">Dostawa: {{shipping_cost}}</p>
               <hr/>
-              <p class="card-text">Razem z dostawą: <h5>500 zł</h5></p>
+              <p class="card-text">Razem z dostawą: <h5>{{total}} zł</h5></p>
               <a href="{% url 'checkout' %}" type="button" class="btn btn-success w-100">Dostawa i płatność</a>
             </div>
           </div>
