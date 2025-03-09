@@ -56,9 +56,7 @@
         </div>
         {% endfor %}
 
-        <div class="card">
-
-        
+        <div class="card mb-3">
             <div class="card-body">
                 <h6 class="card-title text-uppercase">Adres do wysyłki</h6>
                 {% if shipping_user %}
@@ -85,6 +83,27 @@
 
                   </form>
                   {% endif %}
+              </div>
+          </div>
+
+          <div class="card mb-3">
+            <div class="card-body">
+              <form id="shippingMethodForm">
+                <h6 class="card-title text-uppercase">Wysyłka</h6>
+            {% for shipping in shipping_methods %}
+            
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="shippingMethod" id="shippingMethod{{shipping.methods}}" value="{{shipping.methods}}" {% if shipping.get_methods_display == 'Kurier' %}checked{% endif %}>
+              
+                <h5>{{shipping.get_methods_display}}</h5>
+                <p class="card-text">Cena: {{shipping.price}} zł</p>
+                <p class="card-text">Czas dostawy: {{shipping.time}} dni</p>
+
+            </div>
+
+            <br/>
+            {% endfor %}
+          </form>
               </div>
           </div>
 
@@ -139,4 +158,15 @@
   
   </div>
   </form>
+
+  <script>
+
+  shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').val();
+  console.log(shipping_cost);
+  $("input[name=shippingMethod]").change(function(){
+    shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').val();
+    console.log(shipping_cost);
+  });
+    </script>
+
   {% endblock %}

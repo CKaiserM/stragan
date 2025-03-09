@@ -42,14 +42,13 @@ class CheckoutView(APIView):
         cart_quantities = cart.get_quantity
         cart_total = cart.get_cart_total()
         cart_subtotal = cart.get_cart_subtotal()
-        shipping_methods = ShippingMethod.objects.all()
-        
-        
+        #add seller id!
+        shipping_methods = ShippingMethod.objects.filter(user__id=1)
 
         if request.user.is_authenticated:
             shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
             shipping_address_form = ShippingAddressForm(request.POST or None, instance=shipping_user)
-            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form, 'shipping_user':shipping_user, 'shipping_cost':shipping_methods})
+            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form, 'shipping_user':shipping_user, 'shipping_methods':shipping_methods})
         else:
             shipping_address_form = ShippingAddressForm(request.POST or None)
-            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form, 'shipping_cost':shipping_methods})
+            return Response({'cart_checkout':cart_checkout, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_address_form':shipping_address_form, 'shipping_methods':shipping_methods})
