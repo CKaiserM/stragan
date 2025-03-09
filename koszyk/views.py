@@ -80,3 +80,4 @@ class KoszykView(APIView):
             response = JsonResponse({'Quantity': product_qty})
             
             return response
+        
