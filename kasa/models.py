@@ -43,6 +43,15 @@ def create_shipping_address(sender, instance, created, **kwargs):
         user_shipping.save()
 post_save.connect(create_shipping_address, sender=User)
     
+class PaymentMethods(models.Model):
+    payment_name = models.CharField(max_length=120)
+
+    class Meta:
+        verbose_name_plural = "Metody płatności"
+
+    def __str__(self):
+        return self.payment_name
+
 class InvoiceDetails(models.Model):
     company_name = models.CharField(max_length=120, null=True, blank=True)
     company_nip = models.CharField(max_length=20, null=True, blank=True)

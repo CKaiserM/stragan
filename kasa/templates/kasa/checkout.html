@@ -3,101 +3,127 @@
 {% load rest_framework %}
 {% block content %}
 <div class="container">
-  
-    <div class="row g-0">
-      <div class="col-md-8">
-        {% for item in cart_checkout %}
-        <div class="card my-3">
-          <div class="row g-0">
-            <div class="col-md-4">
-              <img src="{{item.featured_image.url}}" class="img-fluid rounded-start" alt="{{item.title}}">
-            </div>
-            <div class="col-md-4">
-              <div class="card-body">
-                <h5 class="card-title">{{item.title}}</h5>
-                <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
-                <p class="card-text">Liczba sztuk:</p>
-                <div class="input-group-qty">
-                  {% for key, value in cart_quantities.items %}
-                    {% if key == item.id|slugify %}
-                      {{value}}
-                    {% endif %}
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 text-end p-3">
-              <h5 class="card-title">
-                {% for key, value in cart_subtotal.items %}
+  <form method="POST" action="{% url 'process_order' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div class="row g-0">
+    <div class="col-md-8">
+      {% for item in cart_checkout %}
+      <div class="card my-3">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="{{item.featured_image.url}}" class="img-fluid rounded-start" alt="{{item.title}}">
+          </div>
+          <div class="col-md-4">
+            <div class="card-body">
+              <h5 class="card-title">{{item.title}}</h5>
+              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
+              <p class="card-text">Liczba sztuk:</p>
+              <div class="input-group-qty">
+                {% for key, value in cart_quantities.items %}
                   {% if key == item.id|slugify %}
-                    {{value}} zł
+                    {{value}}
                   {% endif %}
                 {% endfor %}
-              </h5>
-              {% if item.is_on_sale %}
-              <p class="card-text">{{item.price_on_sale}} zł/ {{item.unit}}</p>
-              {% else %}
-              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>              
-              {% endif %}
+              </div>
             </div>
           </div>
-          
-          
-        </div>
+          <div class="col-md-4 text-end p-3">
+            <h5 class="card-title">
+              {% for key, value in cart_subtotal.items %}
+                {% if key == item.id|slugify %}
+                  {{value}} zł
+                {% endif %}
+              {% endfor %}
+            </h5>
+            {% if item.is_on_sale %}
+            <p class="card-text">{{item.price_on_sale}} zł/ {{item.unit}}</p>
+            {% else %}
+            <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>              
+            {% endif %}
+          </div>
+        </div>                
+      </div>
         {% endfor %}
 
         <div class="card mb-3">
-            <div class="card-body">
-                <h6 class="card-title text-uppercase">Adres do wysyłki</h6>
-                {% if shipping_user %}
-                <p class="card-text">{{shipping_user.shipping_house_and_street_no}}</p>
-                <p class="card-text">{{shipping_user.shipping_postal_code}} {{shipping_user.shipping_city}}</p>
-                <!-- Button trigger modal -->
-                  <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#shippingaddressChange">ZMIEŃ
-                  </button>
-                  {% else %}
-                  <form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
+          <div class="card-body">
+            <h6 class="card-title text-uppercase">Adres do wysyłki</h6>
+            {% if shipping_user %}
+              <p class="card-text">{{shipping_user.shipping_house_and_street_no}}</p>
+              <p class="card-text">{{shipping_user.shipping_postal_code}} {{shipping_user.shipping_city}}</p>
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#shippingaddressChange">ZMIEŃ
+              </button>
+              {% else %}
 
-                              {{shipping_address_form.shipping_full_name}}
-                              <br/>
-                              {{shipping_address_form.shipping_house_and_street_no}}     
-                              <br/>
-                              {{shipping_address_form.shipping_postal_code}}
-                              <br/>
-                              {{shipping_address_form.shipping_city}}
-                              <br/>
-                              {{shipping_address_form.shipping_country}}
-                              <br/>
-                            <button type="submit" class="btn btn-primary">Zatwierdź</button>
+                {{shipping_address_form.shipping_full_name}}
+                <br/>
+                {{shipping_address_form.shipping_house_and_street_no}}     
+                <br/>
+                {{shipping_address_form.shipping_postal_code}}
+                <br/>
+                {{shipping_address_form.shipping_city}}
+                <br/>
+                {{shipping_address_form.shipping_country}}
+                <br/>
 
-                  </form>
-                  {% endif %}
-              </div>
+            {% endif %}
           </div>
-
-          <div class="card mb-3">
-            <div class="card-body">
-              <form id="shippingMethodForm">
-                <h6 class="card-title text-uppercase">Wysyłka</h6>
-            {% for shipping in shipping_methods %}
-            
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="shippingMethod" id="shippingMethod{{shipping.methods}}" value="{{shipping.price}}" data-field="{{shipping.methods}}" {% if shipping.get_methods_display == 'Kurier' %}checked{% endif %}>
-              
-                <h5>{{shipping.get_methods_display}}</h5>
-                <p class="card-text">Cena: {{shipping.price}} zł</p>
-                <p class="card-text">Czas dostawy: {{shipping.time}} dni</p>
-
-            </div>
-
-            <br/>
-            {% endfor %}
-          </form>
-              </div>
-          </div>
-
         </div>
+
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="shippingMethodForm">
+              <h6 class="card-title text-uppercase">Metody wysyłki</h6>
+              {% for shipping in shipping_methods %}
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="shippingMethod" id="shippingMethod{{shipping.methods}}" value="{{shipping.methods}}" data-field="{{shipping.methods}}" {% if shipping.get_methods_display == 'Kurier' %}checked{% endif %}>
+                    <h5>{{shipping.get_methods_display}}</h5>
+                    <p class="card-text">Cena: {{shipping.price}} zł</p>
+                    <p class="card-text">Czas dostawy: {{shipping.time}} dni</p>
+                </div>
+                <br/>
+              {% endfor %}
+              </div>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-body">
+            <div id="paymentMethodForm">
+              <h6 class="card-title text-uppercase">Metody płatności</h6>
+              {% for payment in payment_methods %}
+                <div class="form-check">
+                  {% if payment.payment_name == "Karta kredytowa" %}
+                  
+                    <input class="form-check-input" type="radio" name="paymentMethod" id="paymentMethod{{payment.id}}" value="{{payment.id}}" data-bs-toggle="collapse" data-bs-target="#cardPayment" aria-expanded="false" aria-controls="cardPayment">
+                    <h5>{{payment.payment_name}}</h5>
+
+                  <div class="accordion-collapse collapse" id="cardPayment" data-bs-parent="#paymentMethodForm">
+                    <div class="card card-body" id="paymentForm">
+                      
+                        {% csrf_token %}
+                        {{payment_form.as_p}}
+                      
+                    </div>
+                  </div>
+                  {% else %}
+                  <input class="form-check-input" type="radio" name="paymentMethod" id="paymentMethod{{payment.id}}" value="{{payment.id}}" data-bs-toggle="collapse"  data-bs-target="#cardPaymentNone" aria-expanded="false" aria-controls="cardPaymentNone" {% if payment.payment_name == 'Gotówka' %}checked{% endif %}>
+                  <h5>{{payment.payment_name}}</h5>
+                  <div class="collapse visually-hidden" id="cardPaymentNone" data-bs-parent="#paymentMethodForm">
+ 
+                  </div>
+                  {% endif %}
+                  
+                </div>
+                <br/>
+              {% endfor %}
+              </div>
+          </div>
+        </div>
+
+      </div>
+
         <div class="col-md-4">
           <div class="card m-3">
             <div class="card-body">
@@ -105,10 +131,13 @@
               <p class="card-text" id="shippingMethodCost"></p>
               <hr/>
               <p class="card-text">Razem z dostawą: <h5 id="total">{{total}} zł</h5></p>
-              <a href="{% url 'checkout' %}" type="button" class="btn btn-success w-100">Przejdź do płatności</a>
+
+              <button type="submit" class="btn btn-success w-100">Zamów</button>
+              
             </div>
           </div>
         </div>
+      </form>
       </div>
     
   </div>
@@ -152,6 +181,19 @@
   <script>
 
   var shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').val();
+
+  // Disable credit card payment Form
+  $('#paymentMethodForm').on('change', function(){
+    var payment_method = $('input[name=paymentMethod]:checked').val();
+    if (payment_method == "2"){
+      $("#paymentForm :input").prop("disabled", false);
+    }
+    else{
+      $("#paymentForm :input").prop("disabled", true);
+    }
+    console.log(payment_method);
+  });
+  
   $('#shippingMethodCost').html("Dostawa: " + shipping_cost + " zł");
   $("input[name=shippingMethod]").change(function(e){
     shipping_cost = $('input[name=shippingMethod]', '#shippingMethodForm').val();

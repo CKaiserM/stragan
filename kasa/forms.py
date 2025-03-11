@@ -31,3 +31,11 @@ class InvoiceForm(forms.ModelForm):
 
         exclude = ['user',]   
 
+class CardPaymentForm(forms.Form):
+    card_full_name = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Imię i nazwisko'}), required=True)
+    card_number = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer karty'}), required=True)
+    card_cvv_number = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer CVV'}), required=True)
+    card_security_code = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Kod bezpieczeństwa'}), required=True)
+    card_exp_date = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ważna do'}), required=True)
+    card_postal_code = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Kod pocztowy'}), required=True)
+
