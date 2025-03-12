@@ -73,7 +73,7 @@ class Order(models.Model):
     order_shipping_address = models.TextField(max_length=255254, default='')
     order_amount_paid = models.DecimalField(max_digits=12, decimal_places=2)
     order_date_ordered = models.DateTimeField(auto_now_add=True)
-    order_shipping_method = models.ForeignKey(ShippingMethod, on_delete=models.CASCADE)
+    #order_shipping_method = models.ForeignKey(ShippingMethod, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Zamówienie"

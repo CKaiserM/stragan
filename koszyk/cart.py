@@ -100,7 +100,11 @@ class Cart():
             key = int(key)
             for product in products_in_carts:
                 if product.id == key:
-                    total = total + (product.price * value)
+                    # if product on sale - grab price on sale
+                    if product.is_on_sale:
+                        total = total + (product.price_on_sale * value)    
+                    else:
+                        total = total + (product.price * value)
 
         return total
     
@@ -119,7 +123,11 @@ class Cart():
             for product in products_in_carts:
                 if product.id == key:
                     # multiply product price by qty and modify dict.
-                    subtotal[str(key)] = (value * product.price)
+                    # if product on sale - grab price on sale
+                    if product.is_on_sale:
+                        subtotal[str(key)] = (value * product.price_on_sale)
+                    else:
+                        subtotal[str(key)] = (value * product.price)
         return subtotal
 
     def __len__(self):

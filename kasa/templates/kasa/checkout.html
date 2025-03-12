@@ -56,16 +56,8 @@
               </button>
               {% else %}
 
-                {{shipping_address_form.shipping_full_name}}
-                <br/>
-                {{shipping_address_form.shipping_house_and_street_no}}     
-                <br/>
-                {{shipping_address_form.shipping_postal_code}}
-                <br/>
-                {{shipping_address_form.shipping_city}}
-                <br/>
-                {{shipping_address_form.shipping_country}}
-                <br/>
+                {{shipping_address_form.as_p}}
+
 
             {% endif %}
           </div>
@@ -153,20 +145,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="form-check form-check-inline">
-            <div class="input-group">
-              {{shipping_address_form.shipping_full_name}}
-              {{shipping_address_form.shipping_house_and_street_no}}
-            </div>
-          </div>
-          <div class="form-check form-check-inline">
-            <div class="input-group">
-              
-              {{shipping_address_form.shipping_postal_code}}
-              {{shipping_address_form.shipping_city}}
-              {{shipping_address_form.shipping_country}}
-            </div>
-          </div>
+
+              {{shipping_address_form.as_p}}
+
+
         </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
@@ -180,6 +162,18 @@
 
   <script>
 
+    $( document ).ready(function() {
+      var shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').val();
+      var payment_method = $('input[name=paymentMethod]:checked').val();
+      if (payment_method == "2"){
+        $("#paymentForm :input").prop("disabled", false);
+      }
+      else{
+        $("#paymentForm :input").prop("disabled", true);
+      }
+      $('#shippingMethodCost').html("Dostawa: " + shipping_cost + " zł");
+  });
+
   var shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').val();
 
   // Disable credit card payment Form
@@ -191,7 +185,6 @@
     else{
       $("#paymentForm :input").prop("disabled", true);
     }
-    console.log(payment_method);
   });
   
   $('#shippingMethodCost').html("Dostawa: " + shipping_cost + " zł");

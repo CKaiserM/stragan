@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.contrib.auth.models import User
 
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
@@ -8,7 +9,8 @@ from rest_framework.views import APIView
 
 from koszyk.cart import Cart
 from kasa.forms import ShippingAddressForm, CardPaymentForm
-from kasa.models import ShippingAddress, ShippingMethod, PaymentMethods
+from kasa.models import ShippingAddress, ShippingMethod, PaymentMethods, Order, OrderItems
+from rynek.models import Profile
 
 class PaymentSuccessView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -46,10 +48,10 @@ class CheckoutView(APIView):
         
     def shipping(request):
         cart = Cart(request)
+        # Get items total price
         cart_total = cart.get_cart_total()
         
         if request.POST.get('action') == 'post':
-            print(request.POST)
             shipping_method = int(request.POST.get('shipping'))
             shipping_cost = ShippingMethod.objects.get(methods=shipping_method).price
             total = shipping_cost + cart_total
@@ -65,29 +67,129 @@ class CheckoutView(APIView):
         pass
 
     def process_order(request):
-        print("in")
-        if request.POST:
-
+        post_data = request.POST
+        #Grab items for Order model 
+        """
+        - order_user, 
+        - order_full_name (name and surname), 
+        - order_email, 
+        - order_shipping_address, 
+        - order_amount_paid, 
+        """
+        if post_data:
             
-            
-            # get shipping session
-            
+            # Get the cart items 
             cart = Cart(request)
-            cart_checkout = cart.get_products
+            cart_products = cart.get_products
             cart_quantities = cart.get_quantity
 
+            #Get cart total costs
+            cart_total = cart.get_cart_total()
+
+            #Get shipping costs
+            shipping_method = int(post_data.get('shippingMethod'))
+            shipping_cost = ShippingMethod.objects.get(methods=shipping_method).price
+
+            # Calculate total costs
+            total = shipping_cost + cart_total
+
+            # Get payment method
+            #payment_method = int(post_data.get('paymentMethod'))
+            
+            print(total)
+            # Get order data
             if request.user.is_authenticated:
-                shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
+                # Get order_user
+                user = request.user
+
+                shipping_address = ShippingAddress.objects.get(user__id=request.user.id)
+                # Get order_full_name
+                full_name = shipping_address.shipping_full_name
+
+                # Get order_email
+                email = shipping_address.shipping_email
+                # Get order_shipping_address
+                address = f"{shipping_address.shipping_house_and_street_no}\n{shipping_address.shipping_postal_code} {shipping_address.shipping_city}\n{shipping_address.shipping_country}"
+
+                # Create order
+                create_order = Order(order_user=user, order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=total)
+                create_order.save()
+
+                # Get order id
+                order_id = create_order.pk
                 
-                print(shipping_user)
+                for product in cart_products():
+                    # Get product id
+                    product_id = product.id
+                    
+                    # Get product price (or sale price)
+                    if product.is_on_sale:
+                        price = product.price_on_sale
+                    else:
+                        price = product.price
 
-            
-            print(cart)
-            
-            print(request.POST)
+                    # Get quantity and create orderItem
+                    for key, value in cart_quantities().items():
+                        if int(key) == product.id:
+                            create_order_items = OrderItems(items_order_id=order_id, items_product_id=product_id, items_user=user, items_quantity=value, items_price=price)
+                            create_order_items.save()
+                    
+                # Delete cart from session and from profile (db)
+                for key in list(request.session.keys()):
+                    if key == "session_key":
+                        del request.session[key]
+                current_user = Profile.objects.filter(user__id=request.user.id)
+                current_user.update(old_cart="")
 
-            return redirect('home')
+            else:
+                # order_user = null
+
+                # Get order_full_name
+                full_name = post_data['shipping_full_name']
+
+                # Get order_email
+                email = post_data['shipping_email']
+                # Get order_shipping_address
+                address = f"{post_data['shipping_house_and_street_no']}\n{post_data['shipping_postal_code']} {post_data['shipping_city']}\n{post_data['shipping_country']}"
+                
+                # Create order
+                create_order = Order(order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=total)
+                create_order.save()
+                
+                # Get order id
+                order_id = create_order.pk
+                
+                for product in cart_products():
+                    # Get product id
+                    product_id = product.id
+                    
+                    # Get product price (or sale price)
+                    if product.is_on_sale:
+                        price = product.price_on_sale
+                    else:
+                        price = product.price
+
+                    # Get quantity and create orderItem
+                    for key, value in cart_quantities().items():
+                        if int(key) == product.id:
+                            create_order_items = OrderItems(items_order_id=order_id, items_product_id=product_id, items_quantity=value, items_price=price)
+                            create_order_items.save()
+                
+                # Delete cart from session
+                for key in list(request.session.keys()):
+                    if key == "session_key":
+                        del request.session[key]
+
+            return redirect('order_placed')
 
         else:
             messages.success(request, ("Niedozwolona akcja"))
             return redirect('home')
+        
+class OrderPlacedView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'kasa/order_placed.html'
+
+    def get(self, request):
+        
+        return Response({})
