@@ -199,18 +199,4 @@ class OrderPlacedView(APIView):
     def get(self, request):
         
         return Response({})
-
-class SellerDashboardView(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'kasa/dashboard.html'
-
-    def get(self, request):
-        # only users in specific group can view the Site
-        in_group =  request.user.groups.filter(name="Sprzedawca").exists()
         
-        if request.user.is_authenticated:
-
-            return Response({})
-        else:
-            messages.success(request, ("Niedozwolona akcja"))
-            return redirect('home')            

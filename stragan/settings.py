@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rynek',
     'koszyk',
     'kasa',
+    'sprzedawca',
 ]
 
 MIDDLEWARE = [

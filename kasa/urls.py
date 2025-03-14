@@ -11,5 +11,4 @@ urlpatterns = [
     path('payment', views.CheckoutView.payment, name="payment"),
     path('process_order', views.CheckoutView.process_order, name="process_order"),
     path('order_placed', views.OrderPlacedView.as_view(), name="order_placed"),
-    path('seller_dashboard', views.SellerDashboardView.as_view(), name="seller_dashboard"),
 ]

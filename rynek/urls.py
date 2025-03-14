@@ -12,8 +12,6 @@ urlpatterns = [
     path('aktualizacja-profilu', views.ProfileView.update_user, name="update"),
     path('rejestracja', views.ProfileView.register_user, name="register"),
     path('usun-profil', views.ProfileView.delete_user, name="delete_profile"),
-
-    path('konto-sprzedawcy', views.CompanyProfileView.as_view(), name="copmany_profile"),
     
     path('resetowanie-hasla/', auth_views.PasswordResetView.as_view(template_name="profile/password_reset.html"),name="password_reset"),
     path('potwierdzenie-resetowania-wyslane/', auth_views.PasswordResetDoneView.as_view(template_name="profile/password_reset_sent.html"), name="password_reset_done"),

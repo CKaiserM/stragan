@@ -204,11 +204,3 @@ class SubcategoryView(APIView):
             subcategory = Product.objects.filter(category__id=pk)
         return Response({'subcategory':subcategory})
     
-class CompanyProfileView(APIView):
-    renderer_classes= [TemplateHTMLRenderer]
-    template_name = 'profile/company_acc.html'
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, pk):
-        profile = Profile.objects.get(user_id=pk)          
-        return Response({"profile":profile})

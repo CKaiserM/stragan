@@ -1,11 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from .models import Product, Category, Subcategory, Profile, Address, FeaturedProducts, Customer, CompanyProfile
+from .models import Product, Category, Subcategory, Profile, Address, FeaturedProducts, Customer
 
 
 # Register products
 admin.site.register(Product)
-admin.site.register(CompanyProfile)
 admin.site.register(Customer)
 admin.site.register(Category)
 admin.site.register(Subcategory)
