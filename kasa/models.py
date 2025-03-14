@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from rynek.models import Product
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
+import datetime
+from django.dispatch import receiver
 
 class ShippingMethod(models.Model):
     METHODS = (
@@ -73,13 +75,25 @@ class Order(models.Model):
     order_shipping_address = models.TextField(max_length=255254, default='')
     order_amount_paid = models.DecimalField(max_digits=12, decimal_places=2)
     order_date_ordered = models.DateTimeField(auto_now_add=True)
-    #order_shipping_method = models.ForeignKey(ShippingMethod, on_delete=models.CASCADE)
+    order_shipping_method = models.CharField(max_length=255)
+    order_shipped = models.BooleanField(default=False)
+    order_date_shipped = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Zamówienie"
 
     def __str__(self):
         return f'Zamówienie - {str(self.id)}'
+    
+# Save the shipping date automaticly
+@receiver(pre_save, sender=Order)
+def date_shipped(sender, instance, **kwargs):
+    if instance.pk:
+        date_now = datetime.datetime.now()
+        obj = sender._default_manager.get(pk=instance.pk)
+        # Save time and date if order_shipped is true
+        if instance.order_shipped and not obj.order_shipped:
+            instance.order_date_shipped = date_now
 
 class OrderItems(models.Model):
     items_order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)

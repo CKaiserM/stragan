@@ -12,6 +12,8 @@ from kasa.forms import ShippingAddressForm, CardPaymentForm
 from kasa.models import ShippingAddress, ShippingMethod, PaymentMethods, Order, OrderItems
 from rynek.models import Profile
 
+from django.contrib.auth.models import Group
+
 class PaymentSuccessView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'kasa/payment_success.html'
@@ -86,10 +88,14 @@ class CheckoutView(APIView):
             #Get cart total costs
             cart_total = cart.get_cart_total()
 
-            #Get shipping costs
-            shipping_method = int(post_data.get('shippingMethod'))
-            shipping_cost = ShippingMethod.objects.get(methods=shipping_method).price
+            shipping = int(post_data.get('shippingMethod'))
 
+            # Get shipping method
+            shipping_method = ShippingMethod.objects.get(methods=shipping).get_methods_display()
+
+            # Get shipping costs
+            shipping_cost = ShippingMethod.objects.get(methods=shipping).price
+            
             # Calculate total costs
             total = shipping_cost + cart_total
 
@@ -112,7 +118,7 @@ class CheckoutView(APIView):
                 address = f"{shipping_address.shipping_house_and_street_no}\n{shipping_address.shipping_postal_code} {shipping_address.shipping_city}\n{shipping_address.shipping_country}"
 
                 # Create order
-                create_order = Order(order_user=user, order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=total)
+                create_order = Order(order_user=user, order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=total, order_shipping_method=shipping_method)
                 create_order.save()
 
                 # Get order id
@@ -153,7 +159,7 @@ class CheckoutView(APIView):
                 address = f"{post_data['shipping_house_and_street_no']}\n{post_data['shipping_postal_code']} {post_data['shipping_city']}\n{post_data['shipping_country']}"
                 
                 # Create order
-                create_order = Order(order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=total)
+                create_order = Order(order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=total, order_shipping_method=shipping_method)
                 create_order.save()
                 
                 # Get order id
@@ -193,3 +199,18 @@ class OrderPlacedView(APIView):
     def get(self, request):
         
         return Response({})
+
+class SellerDashboardView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'kasa/dashboard.html'
+
+    def get(self, request):
+        # only users in specific group can view the Site
+        in_group =  request.user.groups.filter(name="Sprzedawca").exists()
+        
+        if request.user.is_authenticated:
+
+            return Response({})
+        else:
+            messages.success(request, ("Niedozwolona akcja"))
+            return redirect('home')            
