@@ -2,11 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from rynek.models import Profile
 
+from django.db.models.signals import post_save
+
 class CompanyProfile(models.Model):
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
     date_modified = models.DateTimeField(User, auto_now=True)
     company_name = models.CharField(max_length=120, null=True, blank=True)
-    company_logo = models.ImageField(null=True, blank=True)
+    company_email = models.EmailField(max_length=254, null=True, blank=True, unique=True)
+    company_logo = models.ImageField(blank=True, upload_to="images/company_profile/")
     nip = models.CharField(max_length=20, null=True, blank=True)
     regon = models.CharField(max_length=20, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True, default="brak numeru")

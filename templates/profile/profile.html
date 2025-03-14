@@ -33,13 +33,15 @@
         <div class="card-body">
           <p class="card-title">Jesteś z nami:</p>
           <h5 class="card-title">{{ profile.user.date_joined|timesince}}!</h5>
-
+          <!-- Button trigger modal -->
+            <button type="button" class="btn btn-link ps-0 ms-0" data-bs-toggle="modal" data-bs-target="#profileChange">Zmień konto na firmowe
+            </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-12 position-relative ">
       <div class="card">
         <div class="card-body">
@@ -104,9 +106,94 @@
       </div>
     </div>
   </div>
+  
+    {% if profile.is_company %}
+    <div class="row">
+      <div class="col-12 position-relative ">
+        <div class="card">
+          <div class="card-body">
+  
+            <h5 class="card-title">Ustawienia konta firmowego</h5>
+            <div class="row">
+              <div class="col-8">
+                <h6 class="card-subtitle mt-2 text-body-secondary">Twoje dane</h6>
+                <p class="card-text">Informacje o Twojej firmie</p>
+              </div>
+              <div class="col-4">
+                <a href="{% url 'copmany_profile' %}" class="float-end m-2">
+                  ZMIEŃ USTAWIENIA
+                </a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <h6 class="card-subtitle mt-2 text-body-secondary">Kokpit</h6>
+                <a href="{% url 'dashboard' %}" class="float-end m-2">
+                  Przejdź do kokpitu
+                </a>
+              </div>
+            </div>
+  
+            <div class="row">
+              <div class="col-8">
+                <h6 class="card-subtitle mt-2 text-body-secondary">Usuń konto</h6>
+                <p class="card-text">Usuwanie profilu firmowego</p>
+              </div>
+              <div class="col-4">
+                <button type="button" class="btn btn-danger float-end m-2" data-bs-toggle="modal" data-bs-target="#deleteCompanyProfileModal">
+                  <i class="fa-solid fa-person-circle-minus"></i>
+                </button>
+                <div class="modal fade" id="deleteCompanyProfileModal" tabindex="-1" aria-labelledby="deleteCompanyProfileModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteCompanyProfileModalLabel">Usuwanie profilu</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        Aby usunąć profil, proszę potwierdzić.
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form method="POST" action="{% url 'delete_company_profile' %}" enctype="multipart/form-data">
+                          {% csrf_token %}
+                        <button type="submit" class="btn btn-danger modal-link link-cw">      
+                            Usuń profil
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+{% endif %}
 
-
-
+  <!-- Modal -->
+  <div class="modal fade" id="profileChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="profileChangeLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="profileChangeLabel">Prosze potwierdzić</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Utworzyć konto firmowe?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+        <form method="POST" action="{% url 'create_company_profile' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Zmiana</button>
+        </form>
+      </div>
+      </div>
+    </div>
+    </div>
+  </div>
 
 
     </div>

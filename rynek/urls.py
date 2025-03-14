@@ -3,6 +3,8 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from rest_framework.authtoken.views import obtain_auth_token
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.StraganView.as_view(), name="home"),
@@ -24,4 +26,4 @@ urlpatterns = [
     path('dzial/<slug:slug>/<int:pk>/', views.CategoryView.as_view(), name='category'),
     path('kategoria/<slug:slug>/<int:pk>/', views.SubcategoryView.as_view(), name='subcategory'),
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

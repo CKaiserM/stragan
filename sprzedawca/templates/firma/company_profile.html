@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% block content %}
+<div class="container-xl">
+<nav class="m-2" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Stragan</a></li>
+	  <li class="breadcrumb-item"><a href="{% url 'profile' request.user.id %}">Mój profil</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Profil firmy {{company_profile.company_name}}</li>
+    </ol>
+  </nav>
+
+  <div class="card my-3">
+    <div class="row g-0 p-2">
+      <div class="col-md-4">
+        <div class="card-body">
+          <h5 class="card-title">Cześć {{ company_profile.company_name }}!</h5>
+          <p class="card-text">{% if company_profile.company_email %}
+            {{company_profile.company_email}}
+            {% else %}
+            Adres użytkownika: {{company_profile.user.user.email}} {% endif %}</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        {% if company_profile.company_logo %}
+        <img src="{{ company_profile.company_logo.url }}" class="img-fluid rounded-circle" alt="{{company_profile.company_name}}" width="150" height="150" >
+        {% else %}
+        <img src="{% static 'images/default_profile_pic.png' %}" class="img-fluid rounded-circle" alt="{{company_profile.company_name}}" width="150" height="150" >
+        {% endif %}
+      </div>
+      <div class="col-md-1">
+        <div class="vr h-75 my-2"></div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-body">
+          <p class="card-title">Jesteś z nami:</p>
+          <h5 class="card-title">{{ company_profile.user.user.date_joined|timesince}}!</h5>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="row mb-3">
+        <div class="col-12 position-relative ">
+        <div class="card">
+            <div class="card-body">
+
+            <h5 class="card-title">Ustawienia konta</h5>
+            <div class="row">
+                <div class="col-8">
+                <h6 class="card-subtitle mt-2 text-body-secondary">Nazwa firmy:</h6>
+                <p class="card-text">{{company_profile.company_name}}</p>
+                <h6 class="card-subtitle mt-2 text-body-secondary">NIP:</h6>
+                <p class="card-text">{{company_profile.nip}}</p>
+                <h6 class="card-subtitle mt-2 text-body-secondary">REGON:</h6>
+                <p class="card-text">{{company_profile.regon}}</p>
+                <h6 class="card-subtitle mt-2 text-body-secondary">Adres E-Mail:</h6>
+                
+                <p class="card-text">
+                    {% if company_profile.company_email %}
+                    {{company_profile.company_email}}
+                    {% else %}
+                    Brak adresu firmowego. <br>
+                    Adres użytkownika: {{company_profile.user.user.email}} {% endif %}</p>
+                <h6 class="card-subtitle mt-2 text-body-secondary">Siedziba firmy:</h6>
+                <p class="card-text mb-0">{{company_profile.house_and_street_no}}</p>
+                <p class="card-text mb-0">{{company_profile.postal_code}} {{company_profile.city}}</p>
+                <p class="card-text">{{company_profile.country}}</p>
+                </div>
+                <div class="col-4">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#settingsChange">Zmień ustawienia
+                    </button>
+                </div>
+            </div>
+
+
+
+            </div>
+        </div>
+        </div>
+    </div>
+    
+
+ 
+
+
+</div>
+
+<!-- Modal -->
+<form method="POST" action="{% url 'update_company_profile' %}" enctype="multipart/form-data">
+	{% csrf_token %}
+<div class="modal fade" id="settingsChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="settingsChangeLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="settingsChangeLabel">Zmiana danych firmy</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				{{company_info.as_p}}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+				<button type="submit" class="btn btn-primary">Zatwierdź</button>
+			</div>	
+
+		</div>
+	</div>
+</div>
+</form>
+{% endblock %}

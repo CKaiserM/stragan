@@ -85,7 +85,7 @@ class Profile(models.Model):
 
 
 
-# Create a seller profile
+# Create profile
 def create_profile(sender, instance, created, **kwargs):
     if created:
         user_profile = Profile(user=instance)
