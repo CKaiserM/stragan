@@ -7,15 +7,96 @@
         <div class="col-md-12">
             <div class="card my-2">
                 <div class="card-body">
-                  <h5 class="card-title">Dziękujemy za złożenie zamówienia</h5>
-                  <h6 class="card-subtitle mb-2 text-body-secondary">Zamówienie nr.</h6>
-                  <p class="card-text">Zostanie wysłane na adres</p>
+                  <h5 class="card-title">Zamówienia niewysłane</h5>
+                {% if not orders_not_shipped %}
+                  <p class="card-text">Brak zamówień</p>
+                {% else %}
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Numer zamówienia</th>
+                      <th scope="col">Wartość zamówienia</th>
+                      <th scope="col">Adres E-Mail klienta</th>
+                      <th scope="col">Data zamówienia</th>
+                      <th scope="col">Status wysyłki</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for not_shipped in orders_not_shipped %}
+                    
+                    <tr>
+                      <th scope="row">{{not_shipped.id}}</th>
+                      <td>{{not_shipped.order_amount_paid}} zł</td>
+                      <td>{{not_shipped.order_email}}</td>
+                      <td>{{not_shipped.order_date_ordered}}</td>
+                      <td>
+                        <form method="POST" action="{% url 'not_shipped' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="status" value="{{not_shipped.id}}">
+                          <button type="Submit" class="btn btn-danger btn-sm">Zmień status wysyłki</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+                {% endif %}
                 </div>
               </div>
         
         </div>
     </div>
     
+
+
+
+
+
+
+    <div class="row g-0">
+      <div class="col-md-12">
+          <div class="card my-2">
+              <div class="card-body">
+                <h5 class="card-title">Zamówienia wysłane</h5>
+                {% if not orders_shipped %}
+                <p class="card-text">Brak zamówień</p>
+              {% else %}
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Numer zamówienia</th>
+                    <th scope="col">Wartość zamówienia</th>
+                    <th scope="col">Adres E-Mail klienta</th>
+                    <th scope="col">Data wysyłki</th>
+                    <th scope="col">Status wysyłki</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for shipped in orders_shipped %}
+                  
+                  <tr>
+                    <th scope="row">{{shipped.id}}</th>
+                    <td>{{shipped.order_amount_paid}} zł</td>
+                    <td>{{shipped.order_email}}</td>
+                    <td>{{shipped.order_date_shipped}}</td>
+                    <td>
+                      <form method="POST" action="{% url 'shipped' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="{{shipped.id}}">
+                        <button type="submit" class="btn btn-success btn-sm">Zmień status wysyłki</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+              {% endif %}
+              </div>
+            </div>
+      
+      </div>
+  </div>
+
 </div>
 
 
