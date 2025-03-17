@@ -10,9 +10,7 @@ from rest_framework.views import APIView
 from koszyk.cart import Cart
 from kasa.forms import ShippingAddressForm, CardPaymentForm
 from kasa.models import ShippingAddress, ShippingMethod, PaymentMethods, Order, OrderItems
-from rynek.models import Profile
-
-from django.contrib.auth.models import Group
+from rynek.models import Profile, Product
 
 class PaymentSuccessView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -101,8 +99,7 @@ class CheckoutView(APIView):
 
             # Get payment method
             #payment_method = int(post_data.get('paymentMethod'))
-            
-            print(total)
+
             # Get order data
             if request.user.is_authenticated:
                 # Get order_user
@@ -137,6 +134,13 @@ class CheckoutView(APIView):
                     # Get quantity and create orderItem
                     for key, value in cart_quantities().items():
                         if int(key) == product.id:
+                            # Get product qty and deduct ordered value
+                            p = Product.objects.get(id=product.id)
+                            p.quantity = product.quantity - value
+                            if p.quantity == 0:
+                                p.status = False
+                            p.save()
+
                             create_order_items = OrderItems(items_order_id=order_id, items_product_id=product_id, items_user=user, items_quantity=value, items_price=price)
                             create_order_items.save()
                     
@@ -178,6 +182,11 @@ class CheckoutView(APIView):
                     # Get quantity and create orderItem
                     for key, value in cart_quantities().items():
                         if int(key) == product.id:
+                            # Get product qty and deduct ordered value
+                            p = Product.objects.get(id=product.id)
+                            p.quantity = product.quantity - value
+                            p.save()
+
                             create_order_items = OrderItems(items_order_id=order_id, items_product_id=product_id, items_quantity=value, items_price=price)
                             create_order_items.save()
                 

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'koszyk',
     'kasa',
     'sprzedawca',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [

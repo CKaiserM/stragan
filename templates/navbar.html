@@ -7,7 +7,7 @@
 
    
 
-    <div class="input-group">
+    <div class="input-group w-50">
       
       <form class="input-group" action="{% url 'search_product' %}" method="POST">
         {% csrf_token %}
@@ -31,8 +31,9 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <div class="float-end">
       <div class="collapse navbar-collapse" id="navbarScroll">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
         
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'cart_summary' %}"><i class="fa-solid fa-basket-shopping"></i>
@@ -63,6 +64,7 @@
         
         </ul>
       </div>
+    </div>
     </div>
   </nav>
 {% if user.profile.is_company %}

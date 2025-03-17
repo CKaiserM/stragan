@@ -92,6 +92,7 @@ class Cart():
         product_ids = self.cart.keys()
         #filter cart products by ids.
         products_in_carts = Product.objects.filter(id__in=product_ids)
+
         cart_qts = self.cart
 
         total = 0
@@ -99,6 +100,7 @@ class Cart():
         for key, value in cart_qts.items():
             key = int(key)
             for product in products_in_carts:
+
                 if product.id == key:
                     # if product on sale - grab price on sale
                     if product.is_on_sale:

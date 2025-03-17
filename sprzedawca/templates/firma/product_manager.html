@@ -35,8 +35,8 @@
             <tbody>
               {% for product in products %}
               {% if product.status %}
-              <tr {% if product.quantity == 0 %} class="bg-danger"{% endif %}>
-                <th scope="row"><img src="{{product.featured_image.url}}" class="d-block w-100" width="50" height="50" alt=""></th>
+              <tr {% if product.quantity == 0 %} class="table-danger"{% endif %}>
+                <th scope="row"><img src="{{product.featured_image.url}}" class="d-block h-100" width="50" height="50" alt=""></th>
                 <td>{{product.title}}</td>
                 <td>
                   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#productDescription{{product.id}}" aria-expanded="false" aria-controls="productDescription{{product.id}}">
@@ -86,8 +86,8 @@
             <tbody>
               {% for product in products %}
               {% if not product.status %}
-              <tr {% if product.quantity == 0 %} class="bg-danger"{% endif %}>
-                <th scope="row"><img src="{{product.featured_image.url}}" class="d-block w-100" width="50" height="50" alt=""></th>
+              <tr {% if product.quantity == 0 %} class="table-danger"{% endif %}>
+                <th scope="row"><img src="{{product.featured_image.url}}" class="d-block h-100" width="50" height="50" alt=""></th>
                 <td>{{product.title}}</td>
                 <td>
                   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#productDescription{{product.id}}" aria-expanded="false" aria-controls="productDescription{{product.id}}">
