@@ -107,6 +107,7 @@ class Customer(models.Model):
         verbose_name_plural = "Klienci"   
 
 class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=120)
     slug = models.SlugField(null=True, blank=True)
     price = models.DecimalField(default=0, decimal_places=2, max_digits=12)
@@ -114,8 +115,9 @@ class Product(models.Model):
     category = models.ForeignKey(Subcategory, on_delete=models.CASCADE, default=1)
     description = models.TextField(null=True, blank=True)
     featured_image = models.ImageField(upload_to='uploads/product/')
-    images = models.ImageField(upload_to='uploads/product/')
+    #images = models.ImageField(upload_to='uploads/product/')
     status = models.BooleanField(default=True)
+    quantity = models.PositiveIntegerField(default=0)
 
     is_on_sale = models.BooleanField(default=False)
     price_on_sale = models.DecimalField(default=0, decimal_places=2, max_digits=12)
@@ -133,6 +135,16 @@ class Product(models.Model):
             ImageOps.cover(im, output_size).save(self.featured_image.path)
             im.thumbnail(output_size)
             im.save(self.featured_image.path)
+
+    class Meta:
+        verbose_name_plural = "Produkty"
+
+class ProductImages(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    images = models.ImageField(upload_to='uploads/product/')     
+
+    def save(self, *args, **kwargs):
+        super(ProductImages, self).save(*args, **kwargs)
         
         #featured image resize
         lg_output_size = (800, 600)
@@ -142,7 +154,7 @@ class Product(models.Model):
             img.save(self.images.path)
 
     class Meta:
-        verbose_name_plural = "Produkty"          
+        verbose_name_plural = "Zdjęcia Produktów"    
 
 class FeaturedProducts(models.Model):
     featured = models.ForeignKey(Product, on_delete=models.CASCADE)

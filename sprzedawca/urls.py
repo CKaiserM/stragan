@@ -11,9 +11,10 @@ urlpatterns = [
     path('wyslano', views.SellerDashboardView.shipped, name="shipped"),
     path('niewyslano', views.SellerDashboardView.not_shipped, name="not_shipped"),
     path('konto-sprzedawcy/', views.CompanyProfileView.as_view(), name="copmany_profile"),
+    path('dodaj-produkt', views.ProductManagerView.as_view(), name="add_product"),
     
     path('aktualizuj-konto', views.CompanyProfileView.update_company_profile, name="update_company_profile"),
     path('dodaj-konto', views.CompanyProfileView.create_company_profile, name="create_company_profile"),
-    path('usun-konto', views.CompanyProfileView.delete_company_profile, name="delete_company_profile")
+    path('usun-konto', views.CompanyProfileView.delete_company_profile, name="delete_company_profile"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

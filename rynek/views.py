@@ -19,7 +19,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Product, Profile, FeaturedProducts, Category, Subcategory
+from .models import Product, Profile, FeaturedProducts, Category, Subcategory, ProductImages
 from .forms import SignUpForm, UpdateUserForm, UserInfoForm
 from kasa.forms import ShippingAddressForm
 from kasa.models import ShippingAddress
@@ -178,8 +178,10 @@ class SingleProductView(APIView):
 
         if pk:
             single_product = Product.objects.get(id=pk)
+            product_images = ProductImages.objects.filter(product__id=pk)
+
             
-        return Response({'single_product':single_product})
+        return Response({'single_product':single_product, 'product_images':product_images})
     
 #category view - list subcategories
 class CategoryView(APIView):

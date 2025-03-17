@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from rynek.models import Profile
+from rynek.models import Profile, Product
 
 from django.db.models.signals import post_save
 

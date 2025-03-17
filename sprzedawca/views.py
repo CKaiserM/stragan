@@ -9,9 +9,10 @@ from datetime import datetime
 
 from rynek.models import Profile
 
-from .forms import CompanyInfoForm
+from .forms import CompanyInfoForm, AddProductForm, AddProductImagesForm
 from .models import CompanyProfile
 from kasa.models import Order
+from rynek.models import Product, ProductImages
 
 class SellerDashboardView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -88,5 +89,29 @@ class CompanyProfileView(APIView):
              
             if company_info.is_valid():
                 company_info.save()   
+        return redirect(request.META.get("HTTP_REFERER"))
+    
+class ProductManagerView(APIView):
+    renderer_classes= [TemplateHTMLRenderer]
+    template_name = 'firma/product_manager.html'
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        products = Product.objects.filter(user__id=request.user.id)
+        form = AddProductForm()
+        images = AddProductImagesForm()
+        return Response({"products":products, 'form':form, 'images':images})
+    
+    def post(self, request):
+        form = AddProductForm()
+        images_form = AddProductImagesForm()
+        if request.user.is_authenticated:
+            form = AddProductForm(request.POST or None, request.FILES or None)
+            images_form = AddProductImagesForm(request.FILES.getlist('image') or None)
+            images = request.FILES.getlist('image')
+            if form.is_valid(): 
+                product = form.save()
+                for img in images:
+                    ProductImages(product=product, images=img).save()
         return redirect(request.META.get("HTTP_REFERER"))
 
