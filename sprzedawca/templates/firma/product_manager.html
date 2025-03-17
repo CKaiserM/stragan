@@ -3,25 +3,148 @@
 {% load rest_framework %}
 {% block content %}
 <div class="container">
-    <div class="row g-0">
-        <div class="col-md-12">
-            <div class="card my-2">
-                <div class="card-body">
-                  <h5 class="card-title">Dodaj produkt</h5>
-                  <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}  
-                  {{form.as_p}}
-                  {{images.as_p}}
-                  <button type="Submit" class="btn btn-danger btn-sm">Dodaj</button>
-                  </form>
-              </div>
-            </div>
-      
+  <div class="row g-0">
+    <div class="col-md-12">
+      <div class="card my-2">
+        <div class="card-body">
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            Dodaj nowy produkt
+          </button>
+        </div>
       </div>
+    </div>
+  </div>
+  <div class="row g-0">
+    <div class="col-md-12">
+      <div class="card my-2">
+        <div class="card-body">
+          <h5 class="card-title">Produkty aktywne</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Zdjęcie</th>
+                <th scope="col">Nazwa produktu</th>
+                <th scope="col">Opis</th>
+                <th scope="col">Cena</th>
+                <th scope="col">Ilość</th>
+                <th scope="col">Jednostak miary</th>
+                <th scope="col">Zmień ustawienia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+              {% if product.status %}
+              <tr {% if product.quantity == 0 %} class="bg-danger"{% endif %}>
+                <th scope="row"><img src="{{product.featured_image.url}}" class="d-block w-100" width="50" height="50" alt=""></th>
+                <td>{{product.title}}</td>
+                <td>
+                  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#productDescription{{product.id}}" aria-expanded="false" aria-controls="productDescription{{product.id}}">
+                    Pokaż opis
+                  </button>
+                </td>
+                <td>{{product.price}} zł</td>
+                <td>{{product.quantity}}</td>
+                <td>{{product.unit}}</td>
+                <td><a href="{% url 'update_product' product.id %}">Aktualizuj</a></td>
+              </tr>
+              <tr>
+                <td colspan="8">
+              <div class="collapse" id="productDescription{{product.id}}">
+                <div class="card-body">
+                  {{product.description}}
+                </div>
+              </div>
+              </td>
+            </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>   
+        </div>
+      </div>
+    </div>
   </div>
 
+  <div class="row g-0">
+    <div class="col-md-12">
+      <div class="card my-2">
+        <div class="card-body">
+          <h5 class="card-title">Produkty nieaktywne</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Zdjęcie</th>
+                <th scope="col">Nazwa produktu</th>
+                <th scope="col">Opis</th>
+                <th scope="col">Cena</th>
+                <th scope="col">Ilość</th>
+                <th scope="col">Jednostak miary</th>
+                <th scope="col">Zmień ustawienia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+              {% if not product.status %}
+              <tr {% if product.quantity == 0 %} class="bg-danger"{% endif %}>
+                <th scope="row"><img src="{{product.featured_image.url}}" class="d-block w-100" width="50" height="50" alt=""></th>
+                <td>{{product.title}}</td>
+                <td>
+                  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#productDescription{{product.id}}" aria-expanded="false" aria-controls="productDescription{{product.id}}">
+                    Pokaż opis
+                  </button>
+                </td>
+                <td>{{product.price}} zł</td>
+                <td>{{product.quantity}}</td>
+                <td>{{product.unit}}</td>
+                <td><a href="{% url 'update_product' product.id %}">Aktualizuj</a></td>
+              </tr>
+              <tr>
+                <td colspan="8">
+              <div class="collapse" id="productDescription{{product.id}}">
+                <div class="card-body">
+                  {{product.description}}
+                </div>
+              </div>
+              </td>
+            </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>   
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
+        {% csrf_token %} 
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addProductModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+ 
+        {{form.as_p}}
+        {{images.as_p}}
+        
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+        <button type="Submit" class="btn btn-danger btn-sm">Dodaj produkt</button>
+      </div>
+    </form>
+    </div>
+  </div>
 </div>
 
 
+
+</div>
 
   {% endblock %}

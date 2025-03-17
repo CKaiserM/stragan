@@ -33,9 +33,11 @@
         <div class="card-body">
           <p class="card-title">Jesteś z nami:</p>
           <h5 class="card-title">{{ profile.user.date_joined|timesince}}!</h5>
+          {% if not profile.is_company %}
           <!-- Button trigger modal -->
             <button type="button" class="btn btn-link ps-0 ms-0" data-bs-toggle="modal" data-bs-target="#profileChange">Zmień konto na firmowe
             </button>
+            {% endif %}
         </div>
       </div>
     </div>

@@ -52,7 +52,8 @@ class AddProductForm(forms.ModelForm):
     
     class Meta:
         model = Product
-        fields = ('user', 'title', 'price', 'unit', 'category', 'description', 'featured_image', 'status', 'quantity')
+        fields = ('title', 'price', 'unit', 'category', 'description', 'featured_image', 'status', 'quantity')
+        exclude = ["user"]
         
 class AddProductImagesForm(forms.ModelForm):
 

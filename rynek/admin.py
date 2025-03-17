@@ -22,7 +22,7 @@ class ProfileInline(admin.StackedInline):
 class UserAdmin(admin.ModelAdmin):
     model = User
     #display only username
-    fields = ["username", "email"]
+    fields = ["username", "email", "groups"]
     inlines = [ProfileInline]
 
 # Unregister initial User
@@ -31,4 +31,5 @@ admin.site.unregister(User)
 # Register user and profile
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile)
+
 
