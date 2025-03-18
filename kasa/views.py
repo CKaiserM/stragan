@@ -194,8 +194,8 @@ class CheckoutView(APIView):
                 for key in list(request.session.keys()):
                     if key == "session_key":
                         del request.session[key]
-
-            return redirect('order_placed')
+            
+            return redirect('order_placed', order_id)
 
         else:
             messages.success(request, ("Niedozwolona akcja"))
@@ -205,7 +205,9 @@ class OrderPlacedView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'kasa/order_placed.html'
 
-    def get(self, request):
-        
-        return Response({})
+    def get(self, request, pk):
+        order = Order.objects.get(id=pk)
+        shipping_address = order.order_shipping_address
+        order_id = order.id
+        return Response({'shipping_address':shipping_address, 'order_id':order_id})
         
