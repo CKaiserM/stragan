@@ -65,12 +65,14 @@ class ProfileView(APIView):
 
                 #convert str to dict
                 if user_cart:
+
                     user_cart_json = json.loads(user_cart)
                 
-                cart = Cart(request)
-                # add items from db to Cart
-                for key, value in user_cart_json.items():
-                    cart.add_from_db(product=key, quantity=value)
+                    cart = Cart(request)
+                    
+                    # add items from db to Cart
+                    for key, value in user_cart_json.items():
+                        cart.add_from_db(product=key, quantity=value)
 
                 messages.success(request, ("You have been logged in"))
                 return redirect('home')

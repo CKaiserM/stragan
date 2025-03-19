@@ -69,7 +69,8 @@ class InvoiceDetails(models.Model):
         verbose_name_plural = "Dane do faktury"
 
 class Order(models.Model):
-    order_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    order_company = models.ForeignKey(User, on_delete=models.CASCADE, related_name="order_seller", null=True, blank=True)
+    order_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="order_buyer")
     order_full_name = models.CharField(max_length=255)
     order_email = models.CharField(max_length=255, blank=True, null=True, default='')
     order_shipping_address = models.TextField(max_length=255254, default='')
@@ -98,7 +99,8 @@ def date_shipped(sender, instance, **kwargs):
 class OrderItems(models.Model):
     items_order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
     items_product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
-    items_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    items_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="item_buyer")
+    items_company = models.ForeignKey(User, on_delete=models.CASCADE, related_name="item_seller", null=True, blank=True)
 
     items_quantity = models.PositiveBigIntegerField(default=1)
     items_price = models.DecimalField(max_digits=12, decimal_places=2)

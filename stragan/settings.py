@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'koszyk',
     'kasa',
     'sprzedawca',
+    'eka',
+    'after_response',
     'django_cleanup.apps.CleanupConfig',
 ]
 

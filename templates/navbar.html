@@ -34,7 +34,19 @@
       <div class="float-end">
       <div class="collapse navbar-collapse" id="navbarScroll">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
-        
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link position-relative" href="{% url 'notifications' %}">
+              <i class="fa-regular fa-bell"></i>
+                {% if unread_notifications %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-2">       
+                    {{ unread_notifications }}
+                </span>
+                {% endif %}
+           
+            </a>
+          </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'cart_summary' %}"><i class="fa-solid fa-basket-shopping"></i>
               <span class="badge text-bg-secondary" id="cart_quantity">

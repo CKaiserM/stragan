@@ -132,6 +132,50 @@ class Cart():
                         subtotal[str(key)] = (value * product.price)
         return subtotal
 
+    def get_cart_total_by_user(self, usr):
+        product_ids = self.cart.keys()
+        #filter cart products by ids.
+        products_in_carts = Product.objects.filter(id__in=product_ids, user=usr)
+
+        cart_qts = self.cart
+
+        total = 0
+
+        for key, value in cart_qts.items():
+            key = int(key)
+            for product in products_in_carts:
+
+                if product.id == key:
+                    # if product on sale - grab price on sale
+                    if product.is_on_sale:
+                        total = total + (product.price_on_sale * value)    
+                    else:
+                        total = total + (product.price * value)
+
+        return total
+    
+    def get_cart_subtotal_by_user(self, usr):
+        product_ids = self.cart.keys()
+        #filter cart products by ids.
+        products_in_carts = Product.objects.filter(id__in=product_ids, user_id=usr.id)
+        #get cart items and qts
+        cart_qts = self.cart
+        #copy cart items
+        subtotal = cart_qts.copy()
+        
+        #
+        for key, value in subtotal.items():
+            key = int(key)
+            for product in products_in_carts:
+                if product.id == key:
+                    # multiply product price by qty and modify dict.
+                    # if product on sale - grab price on sale
+                    if product.is_on_sale:
+                        subtotal[str(key)] = (value * product.price_on_sale)
+                    else:
+                        subtotal[str(key)] = (value * product.price)
+        return subtotal
+
     def __len__(self):
         return len(self.cart)
 

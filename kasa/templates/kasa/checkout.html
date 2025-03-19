@@ -69,7 +69,7 @@
               <h6 class="card-title text-uppercase">Metody wysyłki</h6>
               {% for shipping in shipping_methods %}
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="shippingMethod" id="shippingMethod{{shipping.methods}}" value="{{shipping.methods}}" data-field="{{shipping.methods}}" {% if shipping.get_methods_display == 'Kurier' %}checked{% endif %}>
+                  <input class="form-check-input" type="radio" name="shippingMethod" id="shippingMethod{{shipping.methods}}" value="{{shipping.methods}}" data-cost="{{shipping.price}}" data-field="{{shipping.methods}}" {% if shipping.get_methods_display == 'Kurier' %}checked{% endif %}>
                     <h5>{{shipping.get_methods_display}}</h5>
                     <p class="card-text">Cena: {{shipping.price}} zł</p>
                     <p class="card-text">Czas dostawy: {{shipping.time}} dni</p>
@@ -163,18 +163,19 @@
   <script>
 
     $( document ).ready(function() {
-      var shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').val();
+      var shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').data('cost');
       var payment_method = $('input[name=paymentMethod]:checked').val();
       if (payment_method == "2"){
         $("#paymentForm :input").prop("disabled", false);
       }
       else{
         $("#paymentForm :input").prop("disabled", true);
-      }
+      };
+      console.log(shipping_cost);
       $('#shippingMethodCost').html("Dostawa: " + shipping_cost + " zł");
   });
 
-  var shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').val();
+  var shipping_cost = $('input[name=shippingMethod]:checked', '#shippingMethodForm').data('cost');
 
   // Disable credit card payment Form
   $('#paymentMethodForm').on('change', function(){

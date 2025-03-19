@@ -24,8 +24,8 @@ class SellerDashboardView(APIView):
         in_group = request.user.groups.filter(name="Sprzedawca").exists()
         
         if request.user.is_authenticated and in_group:
-            orders_not_shipped = Order.objects.filter(order_shipped=False)
-            orders_shipped = Order.objects.filter(order_shipped=True)
+            orders_not_shipped = Order.objects.filter(order_shipped=False, order_company=request.user)
+            orders_shipped = Order.objects.filter(order_shipped=True, order_company=request.user)
             
             return Response({"orders_not_shipped":orders_not_shipped, 'orders_shipped':orders_shipped})
         else:
@@ -39,9 +39,12 @@ class SellerDashboardView(APIView):
         if request.user.is_authenticated and in_group:
             if request.method == "POST":
                 order_id = request.POST['status']
-                order = Order.objects.filter(id=order_id)
+                order = Order.objects.get(id=order_id)
                 now = datetime.now()
-                order.update(order_shipped=False, order_date_shipped=now)
+                order.order_shipped = False 
+                order.order_date_shipped = now
+                order.save()
+                
                 return redirect(request.META.get("HTTP_REFERER"))
 
     def not_shipped(request):
@@ -51,9 +54,11 @@ class SellerDashboardView(APIView):
         if request.user.is_authenticated and in_group:
             if request.method == "POST":
                 order_id = request.POST['status']
-                order = Order.objects.filter(id=order_id)
+                order = Order.objects.get(id=order_id)
                 now = datetime.now()
-                order.update(order_shipped=True, order_date_shipped=now)
+                order.order_shipped = True 
+                order.order_date_shipped = now
+                order.save()
                 return redirect(request.META.get("HTTP_REFERER"))
 
 class CompanyProfileView(APIView):

@@ -29,4 +29,5 @@ urlpatterns = [
     path('koszyk/', include('koszyk.urls')),
     path('kasa/', include('kasa.urls')),
     path('firma/', include('sprzedawca.urls')),
+    path('powiadomienia/', include('eka.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
