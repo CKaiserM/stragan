@@ -7,7 +7,7 @@
 
    
 
-    <div class="input-group">
+    <div class="input-group w-50">
       
       <form class="input-group" action="{% url 'search_product' %}" method="POST">
         {% csrf_token %}
@@ -31,10 +31,23 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <div class="float-end">
       <div class="collapse navbar-collapse" id="navbarScroll">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        
-          <li class="nav-item">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
+          {% if user.is_authenticated %}
+          <li class="nav-item me-2">
+            <a class="nav-link position-relative" href="{% url 'notifications' %}">
+              <i class="fa-regular fa-bell"></i>
+                {% if unread_notifications %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-2">       
+                    {{ unread_notifications }}
+                </span>
+                {% endif %}
+           
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item me-2">
             <a class="nav-link active" aria-current="page" href="{% url 'cart_summary' %}"><i class="fa-solid fa-basket-shopping"></i>
               <span class="badge text-bg-secondary" id="cart_quantity">
                 {{cart|length}}
@@ -64,7 +77,30 @@
         </ul>
       </div>
     </div>
+    </div>
   </nav>
+{% if user.profile.is_company %}
+<nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd;">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#companyNav" aria-controls="companyNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="companyNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'dashboard' %}">Kokpit</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'copmany_profile' %}">Ustawienia konta</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'copmany_products' %}">Zarządzanie produktami</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endif %}
 
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">

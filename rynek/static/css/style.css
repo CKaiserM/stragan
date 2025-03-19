@@ -75,3 +75,18 @@ input::-webkit-inner-spin-button {
   -moz-appearance: textfield;
   -webkit-appearance: none;
 }
+
+a {
+  text-decoration: none !important;
+}
+
+.link-cw {
+  color: white !important;
+}
+.carousel-button button {
+  width: 60px !important;
+  height: 60px !important;
+}
+.single-product-carousel {
+  height: 400px !important;
+}

@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 
 import after_response
+import json
 
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
@@ -18,8 +19,11 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Product, Profile, FeaturedProducts, Category, Subcategory
-from .forms import SignUpForm, UpdateUserForm, AddressForm
+from .models import Product, Profile, FeaturedProducts, Category, Subcategory, ProductImages
+from .forms import SignUpForm, UpdateUserForm, UserInfoForm
+from kasa.forms import ShippingAddressForm
+from kasa.models import ShippingAddress
+from koszyk.cart import Cart
 
 #Navbar rendering (dynamic links) is included in context_processors.py, and put up in settings.py under TEMPLATES.
 
@@ -54,6 +58,22 @@ class ProfileView(APIView):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+
+                #load cart contents from DB
+                current_user = Profile.objects.get(user__id=request.user.id)
+                user_cart = current_user.old_cart
+
+                #convert str to dict
+                if user_cart:
+
+                    user_cart_json = json.loads(user_cart)
+                
+                    cart = Cart(request)
+                    
+                    # add items from db to Cart
+                    for key, value in user_cart_json.items():
+                        cart.add_from_db(product=key, quantity=value)
+
                 messages.success(request, ("You have been logged in"))
                 return redirect('home')
             else:
@@ -87,19 +107,29 @@ class ProfileView(APIView):
 
     def update_user(request):
         if request.user.is_authenticated:
-            current_user = User.objects.get(id=request.user.id)
-            profile_user = Profile.objects.get(user__id=request.user.id)
+            current_user = Profile.objects.get(user__id=request.user.id)
+            shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
             # Get Forms
             user_form = UpdateUserForm(request.POST or None, instance=current_user)
-            address_form = AddressForm(request.POST or None, instance=current_user)
+            user_info = UserInfoForm(request.POST or None, instance=current_user)
+            shipping_address_form = ShippingAddressForm(request.POST or None, instance=shipping_user)
 
-            if user_form.is_valid():
-                user_form.save()
-                login(request, current_user)
+            if user_info.is_valid() or shipping_address_form.is_valid() or user_form.is_valid():
+                #save user info
+                if user_form.is_valid():
+                    user_info.save()
+                #save shipping address
+                if shipping_address_form.is_valid():
+                    shipping_address_form.save()
+
+                if user_form.is_valid():
+                    user_form.save()
                 messages.success(request, ("Profil został zaktualizowany!"))
-                return redirect('home')
+                return redirect(request.META.get("HTTP_REFERER"))
+            
+            
 
-            return render(request, "profile/update_user.html", {'user_form':user_form, 'address_form':address_form})
+            return render(request, "profile/update_user.html", {'current_user':current_user, 'shipping_user':shipping_user, 'user_form':user_form, 'user_info':user_info, 'shipping_address_form':shipping_address_form})
         else:
             messages.success(request, ("You Must Be Logged In To View That Page..."))
             return redirect('home')
@@ -150,8 +180,10 @@ class SingleProductView(APIView):
 
         if pk:
             single_product = Product.objects.get(id=pk)
+            product_images = ProductImages.objects.filter(product__id=pk)
+
             
-        return Response({'single_product':single_product})
+        return Response({'single_product':single_product, 'product_images':product_images})
     
 #category view - list subcategories
 class CategoryView(APIView):
@@ -160,7 +192,7 @@ class CategoryView(APIView):
 
     def get(self, request, slug, pk):
         category = None
-
+        
         if pk:
             category = Subcategory.objects.filter(parent_name=pk)
         return Response({'category':category})
@@ -175,3 +207,4 @@ class SubcategoryView(APIView):
         if pk:
             subcategory = Product.objects.filter(category__id=pk)
         return Response({'subcategory':subcategory})
+    

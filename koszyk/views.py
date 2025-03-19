@@ -1,16 +1,13 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .cart import Cart
 from rynek.models import Product
+from kasa.models import ShippingMethod
 from django.http import JsonResponse
-
 
 class KoszykView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
@@ -22,9 +19,14 @@ class KoszykView(APIView):
         
         cart_summary = cart.get_products
         cart_quantities = cart.get_quantity
-        cart_total = cart.get_cart_total
-        cart_subtotal = cart.get_cart_subtotal
-        return Response({'cart_summary':cart_summary, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal})
+        cart_total = cart.get_cart_total()
+        cart_subtotal = cart.get_cart_subtotal()
+        #change later to
+        #seller_id + shipping costs
+        
+        shipping_cost = ShippingMethod.objects.get(user__id=1, methods=2).price
+        total = shipping_cost + cart_total
+        return Response({'cart_summary':cart_summary, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_cost':shipping_cost, 'total':total})
         
     def add(request):
         cart = Cart(request)
@@ -74,3 +76,4 @@ class KoszykView(APIView):
             response = JsonResponse({'Quantity': product_qty})
             
             return response
+        

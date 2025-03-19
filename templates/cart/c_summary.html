@@ -2,7 +2,7 @@
 
 {% load rest_framework %}
 {% block content %}
-<div class="container">
+<div class="container-xxl">
   
     <div class="row g-0">
       <div class="col-md-8">
@@ -18,13 +18,13 @@
                 <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
                 <p class="card-text">Liczba sztuk:</p>
                 <div class="input-group-qty">
-                  <input type="button" value="-" class="button-minus" data-field="quantity">
                   {% for key, value in cart_quantities.items %}
                     {% if key == item.id|slugify %}
-                      <input id="product_qty_{{item.id}}" type="number" step="1" min="1" max="" value="{{value}}" name="quantity" class="quantity-field">
+                      <input type="button" value="-" class="button-minus" data-field="quantity">
+                      <input id="product_qty_{{item.id}}" type="number" step="1" min="1" max="{{item.quantity}}" value="{{value}}" name="quantity" class="quantity-field">
+                      <input type="button" value="+" class="button-plus" data-field="quantity"> z {{item.quantity}}
                     {% endif %}
                   {% endfor %}
-                  <input type="button" value="+" class="button-plus" data-field="quantity">
                 </div>
               </div>
             </div>
@@ -40,21 +40,16 @@
                   {% endif %}
                 {% endfor %}
               </h5>
-              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>
+              {% if item.is_on_sale %}
+              <p class="card-text">{{item.price_on_sale}} zł/ {{item.unit}}</p>
+              {% else %}
+              <p class="card-text">{{item.price}} zł/ {{item.unit}}</p>              
+              {% endif %}
+              
             </div>
           </div>
           
-          <div class="row g-0">
-            <div class="col-md-12 text-end p-3">
-              <div class="m-2">
-              <hr/>
-              </div>
 
-              <p class="card-text">Z dostawą:
-                </p>
-
-            </div>
-          </div>
         </div>
         {% endfor %}
         </div>
@@ -62,10 +57,10 @@
           <div class="card m-3">
             <div class="card-body">
               <p class="card-text">Wartość produktów: {{cart_total}}</p>
-              <p class="card-text">Dostawa:</p>
+              <p class="card-text">Dostawa: {{shipping_cost}}</p>
               <hr/>
-              <p class="card-text">Razem z dostawą: <h5>500 zł</h5></p>
-              <button type="button" class="btn btn-success w-100">Dostawa i płatność</button>
+              <p class="card-text">Razem z dostawą: <h5>{{total}} zł</h5></p>
+              <a id="orderItems" href="{% url 'checkout' %}" type="button" class="btn btn-success w-100">Dostawa i płatność</a>
             </div>
           </div>
         </div>
@@ -165,6 +160,6 @@
     $('.input-group-qty').on('click', '.button-minus', function(e) {
       decrementValue(e);
     });
-
+    
     </script>
 {% endblock %}

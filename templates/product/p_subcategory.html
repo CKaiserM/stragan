@@ -3,8 +3,26 @@
 {% load rest_framework %}
 {% block content %}
 <div class="container text-center">
-
-  {% include 'product/p_list.html'%}
+  {% if subcategory %}
+  <nav class="m-2" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Stragan</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'category' subcategory.0.category.parent_name|lower subcategory.0.category.parent_name.id %}">{{subcategory.0.category.parent_name}}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{subcategory.0.category.name}}</li>
+    </ol>
+  </nav>
+ 
+  {% include 'product/p_list.html' %}
+  {% else %}
+  <nav class="m-2" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Stragan</a></li>
+    </ol>
+  </nav>
+  <div class="m-2">
+  <p>Brak produktów w podanej kategorii</p>
+  </div>
+  {% endif %}
 
 </div>
 {% endblock %}

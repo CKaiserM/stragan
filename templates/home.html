@@ -5,11 +5,37 @@
 <div class="container text-center">
     <div class="row">
         {% for product in products %}
+        {% if product.status %}
         <div class="col">
             {% include 'product/p_home.html'%}
           </div>
+          {% endif %}
         {% endfor %}
 
     </div>
   </div>
+  <script>
+
+    //add product to cart
+    $("button").on('click', function (e) {
+      let t = (this.id);
+      var prod_qty = "1";
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+        product_id: $("#" + t).val(),  
+        product_qty: prod_qty,
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        action: 'post'
+            },
+            success: function(json){
+                location.reload();
+            },
+            error: function(xhr, errmsg, err){   
+            }
+        });
+    });
+    </script>
 {% endblock %}
