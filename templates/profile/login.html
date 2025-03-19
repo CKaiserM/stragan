@@ -3,24 +3,24 @@
 {% block content %}
 {% if user.is_authenticated %}
 <h1>
-    You are already logged in.
+    Jesteś już zalogowany.
 </h1>
 {% else %}
 <div class="col-md-6 offset-md-3">
-    <h1>Login</h1>
+    <h1>Logowanie</h1>
     <br/>
     <form method=POST action="{% url 'login' %}">
         {% csrf_token %}
         <div class="mb-3">
-          <input type="text" class="form-control" name="username" placeholder="Enter Your Username">
+          <input type="text" class="form-control" name="username" placeholder="Login">
           
         </div>
         <div class="mb-3">
-          <input type="password" class="form-control" name="password" placeholder="Enter Your Password">
+          <input type="password" class="form-control" name="password" placeholder="Hasło">
         <br/>
-        <button type="submit" class="btn btn-secondary">Submit</button>
+        <button type="submit" class="btn btn-secondary">Logowanie</button>
       </form>
-
+      <a class="float-end" href="{% url 'password_reset' %}"><i>Zapomniałeś hasła?</i></a>
 
 </div>
 {% endif %}
