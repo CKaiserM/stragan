@@ -24,7 +24,7 @@ from .forms import SignUpForm, UpdateUserForm, UserInfoForm
 from kasa.forms import ShippingAddressForm
 from kasa.models import ShippingAddress
 from koszyk.cart import Cart
-
+from kasa.models import Order, OrderItems
 #Navbar rendering (dynamic links) is included in context_processors.py, and put up in settings.py under TEMPLATES.
 
 #Homepage view
@@ -207,4 +207,15 @@ class SubcategoryView(APIView):
         if pk:
             subcategory = Product.objects.filter(category__id=pk)
         return Response({'subcategory':subcategory})
+    
+#list subcategory items
+class UserOrdersView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'profile/orders.html'
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user_orders = Order.objects.filter(order_user=request.user)        
+        order_items = OrderItems.objects.filter(items_user=request.user)
+        return Response({'order_items':order_items, 'user_orders':user_orders})
     
