@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Product, Profile, FeaturedProducts, Category, Subcategory, ProductImages
-from .forms import SignUpForm, UpdateUserForm, UserInfoForm
+from .forms import SignUpForm, UpdateUserForm, UserInfoForm, UserAddressForm, UserPhoneForm
 from kasa.forms import ShippingAddressForm
 from kasa.models import ShippingAddress
 from koszyk.cart import Cart
@@ -112,24 +112,31 @@ class ProfileView(APIView):
             # Get Forms
             user_form = UpdateUserForm(request.POST or None, instance=current_user)
             user_info = UserInfoForm(request.POST or None, instance=current_user)
+            user_address = UserAddressForm(request.POST or None, instance=current_user)
+            user_phone = UserPhoneForm(request.POST or None, instance=current_user)
             shipping_address_form = ShippingAddressForm(request.POST or None, instance=shipping_user)
 
-            if user_info.is_valid() or shipping_address_form.is_valid() or user_form.is_valid():
-                #save user info
+            if user_info.is_valid() or shipping_address_form.is_valid() or user_form.is_valid() or user_address.is_valid() or user_phone.is_valid():
+                #save user form
                 if user_form.is_valid():
-                    user_info.save()
+                    user_form.save()
                 #save shipping address
                 if shipping_address_form.is_valid():
                     shipping_address_form.save()
+                #save user info
+                if user_address.is_valid():
+                    user_address.save()
 
-                if user_form.is_valid():
-                    user_form.save()
+                if user_phone.is_valid():
+                    user_phone.save()
+
+                if user_info.is_valid():
+                    user_info.save()
+
                 messages.success(request, ("Profil został zaktualizowany!"))
                 return redirect(request.META.get("HTTP_REFERER"))
-            
-            
 
-            return render(request, "profile/update_user.html", {'current_user':current_user, 'shipping_user':shipping_user, 'user_form':user_form, 'user_info':user_info, 'shipping_address_form':shipping_address_form})
+            return render(request, "profile/update_user.html", {'current_user':current_user, 'shipping_user':shipping_user, 'user_form':user_form, 'user_info':user_info, 'user_address':user_address, 'user_phone':user_phone, 'shipping_address_form':shipping_address_form})
         else:
             messages.success(request, ("You Must Be Logged In To View That Page..."))
             return redirect('home')

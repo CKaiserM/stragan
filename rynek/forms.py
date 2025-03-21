@@ -4,30 +4,44 @@ from localflavor.pl.forms import PLNIPField, PLPostalCodeField, PLProvinceSelect
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, SetPasswordForm
 from django.contrib.auth.models import User
 
-class UserInfoForm(forms.ModelForm):
-    phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer telefonu'}), required=False)
-    city = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Miasto'}), required=True)
-    house_and_street_no = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ulica i numer'}), required=True)
-    postal_code = PLPostalCodeField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Kod pocztowy'}), required=True)
 
+class UserInfoForm(forms.ModelForm):
+    first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Imię'}))
+    last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nazwisko'}))
+    
+    class Meta:
+        model = Profile
+        fields = ('first_name', 'last_name',)
+        exclude = ('phone', 'city', 'house_and_street_no', 'postal_code')
+
+class UserPhoneForm(forms.ModelForm):
+    phone = forms.CharField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Numer telefonu'}), required=False)
 
     class Meta:
         model = Profile
-        fields = ('phone', 'city', 'house_and_street_no', 'postal_code')
+        fields = ('phone',)
+        exclude = ('first_name', 'last_name', 'city', 'house_and_street_no', 'postal_code')
 
-
+class UserAddressForm(forms.ModelForm):
+    city = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Miasto'}), required=True)
+    house_and_street_no = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Ulica i numer'}), required=True)
+    postal_code = PLPostalCodeField(widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Kod pocztowy'}), required=True)
+    
+    class Meta:
+        model = Profile
+        fields = ('city', 'house_and_street_no', 'postal_code',)
+        exclude = ('first_name', 'last_name', 'phone')
 
 # Sign-Up form
 
 class SignUpForm(UserCreationForm):
+    username = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nazwa konta'}))
 
-    first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Imię'}))
-    last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nazwisko'}))
     email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Adres Email'}))
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
@@ -48,12 +62,10 @@ class UpdateUserForm(UserChangeForm):
 
     password = None
     email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Adres Email'}))
-    first_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Imię'}))
-    last_name = forms.CharField(label="", max_length=100, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Nazwisko'}))
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('username', 'email')
 
     def __init__(self, *args, **kwargs):
         super(UpdateUserForm, self).__init__(*args, **kwargs)
@@ -63,10 +75,3 @@ class UpdateUserForm(UserChangeForm):
         self.fields['username'].label = ''
         self.fields['username'].help_text = '<span class="form-text text-muted"><small>Wymagane. 150 znaków lub mniej. Tylko litery, cyfry i @/./+/-/_.</small></span>'
 
-        self.fields['first_name'].widget.attrs['class'] = 'form-control'
-        self.fields['first_name'].widget.attrs['placeholder'] = 'Imię'
-        self.fields['first_name'].label = ''
-
-        self.fields['last_name'].widget.attrs['class'] = 'form-control'
-        self.fields['last_name'].widget.attrs['placeholder'] = 'Nazwisko'
-        self.fields['last_name'].label = ''

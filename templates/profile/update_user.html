@@ -109,7 +109,7 @@
 
 
 <!-- Modal -->
-<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+<form method="POST" action="{% url 'update' %}">
 	{% csrf_token %}
 <div class="modal fade" id="nameChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="nameChangeLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -124,8 +124,8 @@
 				<div class="form-check form-check-inline">
 					<div class="input-group">
 						<span class="input-group-text">Imię i Nazwisko</span>
-						{{user_form.first_name}}
-						{{user_form.last_name}}
+						{{user_info.first_name}}
+						{{user_info.last_name}}
 					</div>
 				</div>
 			</div>
@@ -139,7 +139,7 @@
 </div>
 </form>
 
-<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+<form method="POST" action="{% url 'update' %}">
 	{% csrf_token %}
 <div class="modal fade" id="emailChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="emailChangeLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -164,7 +164,7 @@
 </div>
 </form>
 
-<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+<form method="POST" action="{% url 'update' %}">
 	{% csrf_token %}
 	<div class="modal fade" id="phoneChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="phoneChangeLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -176,9 +176,7 @@
 				</div>
 				<div class="modal-body">
 					<p>Ustaw telefon</p>
-							{{user_info.phone}}
-	
-					
+							{{user_phone.phone}}
 				</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
@@ -190,7 +188,7 @@
 </div>
 </form>
 
-<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+<form method="POST" action="{% url 'update' %}">
 	{% csrf_token %}
 <div class="modal fade" id="addressChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addressChangeLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -202,14 +200,14 @@
 			</div>
 			<div class="modal-body">
 				<div class="form-check form-check-inline">
-					<div class="input-group">
-				{{user_info.house_and_street_no}}
+					<div class="input-group mb-2">
+				{{user_address.house_and_street_no}}
 					</div>
 				</div>
 				<div class="form-check form-check-inline">
 					<div class="input-group">
-						{{user_info.postal_code}}
-						{{user_info.city}}
+						{{user_address.postal_code}}
+						{{user_address.city}}
 					</div>
 				</div>
 			</div>
@@ -223,7 +221,7 @@
 </div>
 </form>
 
-<form method="POST" action="{% url 'update' %}" enctype="multipart/form-data">
+<form method="POST" action="{% url 'update' %}">
 	{% csrf_token %}
 <div class="modal fade" id="shippingaddressChange" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="shippingaddressChange" aria-hidden="true">
 	<div class="modal-dialog">
@@ -235,7 +233,7 @@
 			</div>
 			<div class="modal-body">
 				<div class="form-check form-check-inline">
-					<div class="input-group">
+					<div class="input-group mb-2">
 						{{shipping_address_form.shipping_full_name}}
 						{{shipping_address_form.shipping_house_and_street_no}}
 					</div>
