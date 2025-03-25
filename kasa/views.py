@@ -115,12 +115,15 @@ class CheckoutView(APIView):
                 address = f"{shipping_address.shipping_house_and_street_no}\n{shipping_address.shipping_postal_code} {shipping_address.shipping_city}\n{shipping_address.shipping_country}"
 
                 # Get seller and create separate order to all companies
-                sellers = []
+                all_sellers = []
                 for seller in cart_products():
-                    #append seller to a list, if not in the list
-                    sellers.append(seller.user) if seller not in sellers else sellers
-                    order_total = cart.get_cart_total_by_user(seller.user)
-                    create_order = Order(order_company=seller.user, order_user=user, order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=order_total, order_shipping_method=shipping_method)
+                    all_sellers.append(seller.user)
+                # create list of sellers (only unique users)        
+                sellers = list(dict.fromkeys(all_sellers))     
+                # create order
+                for seller in sellers:
+                    order_total = cart.get_cart_total_by_user(seller)
+                    create_order = Order(order_company=seller, order_user=user, order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=order_total, order_shipping_method=shipping_method)
                     create_order.save()
 
                     # Get order id
@@ -139,15 +142,17 @@ class CheckoutView(APIView):
                         # Get quantity and create orderItem
                         for key, value in cart_quantities().items():
                             if int(key) == product.id:
-                                if product.user == seller.user:
+                                if product.user == seller:
                                     # Get product qty and deduct ordered value
                                     p = Product.objects.get(id=product.id)
+                                    
                                     p.quantity = product.quantity - value
                                     if p.quantity == 0:
                                         p.status = False
+                                        p.quantity = 0
                                     p.save()
 
-                                    create_order_items = OrderItems(items_order_id=order_id, items_company=seller.user, items_product_id=product_id, items_user=user, items_quantity=value, items_price=price)
+                                    create_order_items = OrderItems(items_order_id=order_id, items_company=seller, items_product_id=product_id, items_user=user, items_quantity=value, items_price=price)
                                     create_order_items.save()
                     
                 # Delete cart from session and from profile (db)
@@ -168,14 +173,16 @@ class CheckoutView(APIView):
                 # Get order_shipping_address
                 address = f"{post_data['shipping_house_and_street_no']}\n{post_data['shipping_postal_code']} {post_data['shipping_city']}\n{post_data['shipping_country']}"
                 
-                # Get seller
-                sellers = []
+                # Get seller and create separate order to all companies
+                all_sellers = []
                 for seller in cart_products():
-                    #append seller to a list, if not in the list
-                    sellers.append(seller.user) if seller not in sellers else sellers
-                    # Create order
-                    order_total = cart.get_cart_total_by_user(seller.user)
-                    create_order = Order(order_company=seller.user, order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=order_total, order_shipping_method=shipping_method)
+                    all_sellers.append(seller.user)
+                # create list of sellers (only unique users)        
+                sellers = list(dict.fromkeys(all_sellers))     
+                # create order
+                for seller in sellers:
+                    order_total = cart.get_cart_total_by_user(seller)
+                    create_order = Order(order_company=seller, order_full_name=full_name, order_email=email, order_shipping_address=address, order_amount_paid=order_total, order_shipping_method=shipping_method)
                     create_order.save()
                 
                     # Get order id
@@ -194,13 +201,13 @@ class CheckoutView(APIView):
                         # Get quantity and create orderItem
                         for key, value in cart_quantities().items():
                             if int(key) == product.id:
-                                if product.user == seller.user:
+                                if product.user == seller:
                                     # Get product qty and deduct ordered value
-                                    p = Product.objects.get(id=product.id, user=seller.user)
+                                    p = Product.objects.get(id=product.id, user=seller)
                                     p.quantity = product.quantity - value
                                     p.save()
 
-                                    create_order_items = OrderItems(items_order_id=order_id, items_product_id=product_id, items_company=seller.user, items_quantity=value, items_price=price)
+                                    create_order_items = OrderItems(items_order_id=order_id, items_product_id=product_id, items_company=seller, items_quantity=value, items_price=price)
                                     create_order_items.save()
                     
                 # Delete cart from session

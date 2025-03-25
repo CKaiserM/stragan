@@ -83,8 +83,6 @@ class Profile(models.Model):
     class Meta:
         verbose_name_plural = "Profile użytkowników"
 
-
-
 # Create profile
 def create_profile(sender, instance, created, **kwargs):
     if created:

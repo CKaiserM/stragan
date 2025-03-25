@@ -1,0 +1,103 @@
+{% extends 'base.html' %} 
+
+{% load rest_framework %}
+{% block content %}
+<div class="container">
+    <div class="row g-0">
+        <div class="col-md-12">
+            <div class="card my-2">
+                <div class="card-body">
+                  
+                {% if not user_orders %}
+                  <p class="card-text">Brak zamówień</p>
+                {% else %}
+                <div class="row row-cols-6 mb-2">
+                  <div class="col">
+                    Numer zamówienia
+                  </div>
+                  <div class="col">
+                    Cena
+                  </div>
+                  <div class="col">
+                    Data zamówienia
+                  </div>
+                  <div class="col">
+                    Status wysyłki
+                  </div>
+                  <div class="col">
+                    Szczegóły zamówienia
+                  </div>
+                </div>
+                <hr/>
+                  {% for order in user_orders %}
+                  <div class="row row-cols-6 mb-2">
+                    <div class="col">
+                      {{order.id}}
+                    </div>
+                    <div class="col">
+                      {{order.order_amount_paid}} zł
+                    </div>
+                    <div class="col">
+                      {{order.order_date_ordered}}
+                    </div>
+                    <div class="col">
+                      {{order.id}}
+                    </div>
+                    <div class="col">
+                      {% if order.status %}
+                      Przesyłka wysłana
+                      {% else %}
+                      Przesyłka nie wysłana
+                      {% endif %}
+                    </div>
+                    <div class="col">
+                      <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#orderItems{{ order.id }}" aria-expanded="false" aria-controls="orderItems{{ order.id }}">
+                        Sprawdź
+                    </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                        <div class="collapse" id="orderItems{{ order.id }}">
+                            <div class="card card-body">
+                              {% for item in order_items %}
+                                {% if item.items_order.order_date_ordered == order.order_date_ordered %}
+                                  <a class="card_link" href="{% url 'single_product' item.items_product.slug item.items_product.id %}">
+                                    <div class="row row-cols-6 mb-2">
+                                      <div class="col">
+                                        <img src="{{item.items_product.featured_image.url}}" class="d-block h-100" width="50" height="50" alt="">
+                                      </div>
+                                      <div class="col">
+                                        {{item.items_product.title}}
+                                      </div>
+                                      <div class="col">
+                                        {{item.items_product.price}}
+                                      </div>
+                                      <div class="col">
+                                      {{item.items_product.unit}}
+                                      </div>
+                                    </div>
+                                  </a>
+                                {% endif %}
+                              {% endfor %}
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    
+                      <hr/>
+                  {% endfor %}
+
+                {% endif %}
+                </div>
+              </div>
+        
+        </div>
+    </div>
+
+</div>
+
+
+
+  {% endblock %}

@@ -23,8 +23,10 @@ class KoszykView(APIView):
         cart_subtotal = cart.get_cart_subtotal()
         #change later to
         #seller_id + shipping costs
-        
-        shipping_cost = ShippingMethod.objects.get(user__id=1, methods=2).price
+
+        #shipping_cost = ShippingMethod.objects.get(user__id=1, methods=2).price
+        shipping_cost = ShippingMethod.objects.filter(methods=2)
+        shipping_cost = shipping_cost[0].price
         total = shipping_cost + cart_total
         return Response({'cart_summary':cart_summary, 'cart_quantities':cart_quantities, 'cart_total':cart_total, 'cart_subtotal':cart_subtotal, 'shipping_cost':shipping_cost, 'total':total})
         
