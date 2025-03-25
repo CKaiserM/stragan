@@ -67,12 +67,13 @@ class CompanyProfileView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        company_profile = CompanyProfile.objects.get(user__id=request.user.id)
+        profile = get_object_or_404(Profile, user__id=request.user.id)
+        company_profile = get_object_or_404(CompanyProfile, user=profile)
         company_info = CompanyInfoForm(request.POST or None, request.FILES or None, instance=company_profile)      
         return Response({"company_profile":company_profile, 'company_info':company_info})
     
     def create_company_profile(request): 
-        current_user = Profile.objects.get(user__id=request.user.id)
+        current_user = get_object_or_404(Profile, user__id=request.user.id)
         profile_exist = CompanyProfile.objects.filter(user__id=request.user.id).exists()
         if request.user.is_authenticated and not current_user.is_company and not profile_exist:
             if request.method == "POST":
@@ -87,8 +88,8 @@ class CompanyProfileView(APIView):
             return redirect('home')
 
     def delete_company_profile(request):
-        current_user = Profile.objects.get(user__id=request.user.id)
-        profile_exist = CompanyProfile.objects.get(user__id=request.user.id)
+        current_user = get_object_or_404(Profile, user__id=request.user.id)
+        profile_exist = get_object_or_404(CompanyProfile, user__id=request.user.id)
         if request.user.is_authenticated and current_user.is_company and profile_exist:
             if request.method == "POST":
                 current_user.is_company = False
